@@ -88,6 +88,11 @@ namespace TestApp
             return param;
         }
 
+        // Es.
+        // step = 0.001 => print 4 decimal digits
+        // step = 0.06  => print 3 decimal digits
+        private int DecimalsToPrint(double step) => (int)Math.Max(0, Math.Ceiling(-Math.Log10(step)) + 1);
+
         public Parameter<double> TrackBar(string label, double min, double max, double step, Action<double> function = null)
         {
             Parameter<double> param = new Parameter<double>(min, function);
@@ -99,10 +104,18 @@ namespace TestApp
             trackBar.Maximum = (int) Math.Ceiling((max - min) / step);
             trackBar.TickFrequency = 1;
 
-            trackBar.ValueChanged += (ob, ea) => { param.Value = min + trackBar.Value * step; };
+            AddControl(label, trackBar, out Label labelControl);
 
-            AddControl(label, trackBar, out Label _);
-            
+            trackBar.ValueChanged += (ob, ea) =>
+            {
+                // don't go above max val
+                param.Value = Math.Min(max, min + trackBar.Value * step);
+
+                // Print the current value.
+                // Number of decimal digits proportional to the step param.
+                labelControl.Text = label + $@" [{param.Value.ToString("0." + new string('0', DecimalsToPrint(step)))}]";
+            };
+
             return param;
         }
 
