@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace TestApp
+namespace QuickForms
 {
     public class Parameter<T>
     {
@@ -30,7 +30,7 @@ namespace TestApp
         }
     }
 
-    public class Prova : Form
+    public class QuickForm : Form
     {
         private Panel _mainPanel;
 
@@ -39,7 +39,7 @@ namespace TestApp
         /// </summary>
         private readonly IContainer components = null;
 
-        public Prova()
+        public QuickForm()
         {
             InitializeComponent();
         }
@@ -51,8 +51,7 @@ namespace TestApp
 
             button.Click += (ob, ea) =>
             {
-                Task task = new Task(function);
-                task.Start();
+                BeginInvoke(function);
             };
 
             AddSingleControl(button);
@@ -200,7 +199,7 @@ namespace TestApp
         {
             SuspendLayout();
 
-            Name = "Prova";
+            Name = "QuickForm";
             AutoScaleDimensions = new SizeF(6F, 13F);
             AutoScaleMode = AutoScaleMode.Font;
             Size = new Size(400, 300);
