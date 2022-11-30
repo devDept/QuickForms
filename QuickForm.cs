@@ -11,23 +11,32 @@ namespace QuickForms
     public class Parameter<T>
     {
         public Action<T> Function;
-        private T _value;
 
-        public Parameter(T value, Action<T> function = null)
+        /// <summary>
+        /// Sets the property in the GUI control.
+        /// </summary>
+        private readonly Action<T> _setter;
+
+        /// <summary>
+        /// Sets the property in the GUI control.
+        /// </summary>
+        private readonly Func<T> _getter;
+        
+        public Parameter(Func<T> getter, Action<T> setter, Action<T> function = null)
         {
-            _value = value;
+            _getter = getter;
+            _setter = setter;
+            
             Function = function ?? (val => {});
         }
 
         public T Value
         {
-            get => _value;
-            set
-            {
-                _value = value;
-                Function(_value);
-            }
+            get => _getter();
+            set => _setter(value);
         }
+
+        public void Trigger() => Function(Value);
     }
 
     public class QuickForm : Form
@@ -35,7 +44,7 @@ namespace QuickForms
         private Panel _mainPanel;
 
         /// <summary>
-        ///     Required designer variable.
+        /// Required designer variable.
         /// </summary>
         private readonly IContainer components = null;
 
@@ -56,7 +65,7 @@ namespace QuickForms
 
             AddSingleControl(button);
         }
-
+        
         public Parameter<bool> CheckBox(string label, Action<bool> function = null)
         {
             CheckBox checkBox = new CheckBox();
@@ -64,9 +73,13 @@ namespace QuickForms
             checkBox.Text = "";
             checkBox.UseVisualStyleBackColor = true;
 
-            Parameter<bool> param = new Parameter<bool>(checkBox.Checked, function);
+            Parameter<bool> param = new Parameter<bool>(
+                () => checkBox.Checked,
+                val => checkBox.Checked = val,
+                function
+            );
 
-            checkBox.CheckedChanged += (ob, ea) => { param.Value = checkBox.Checked; };
+            checkBox.CheckedChanged += (ob, ea) => param.Trigger();
 
             AddControl(label, checkBox, out _);
 
@@ -75,12 +88,16 @@ namespace QuickForms
 
         public Parameter<string> TextBox(string label, Action<string> function = null)
         {
-            Parameter<string> param = new Parameter<string>("", function);
-
             TextBox textbox = new TextBox();
 
+            Parameter<string> param = new Parameter<string>(
+                () => textbox.Text,
+                text => textbox.Text = text,
+                function
+            );
+
             textbox.AllowDrop = true;
-            textbox.LostFocus += (ob, ea) => param.Value = textbox.Text;
+            textbox.LostFocus += (ob, ea) => param.Trigger();
 
             AddControl(label, textbox, out _);
 
@@ -94,8 +111,6 @@ namespace QuickForms
 
         public Parameter<double> TrackBar(string label, double min, double max, double step, Action<double> function = null)
         {
-            Parameter<double> param = new Parameter<double>(min, function);
-
             TrackBar trackBar = new TrackBar();
 
             trackBar.Text = label;
@@ -105,10 +120,14 @@ namespace QuickForms
 
             AddControl(label, trackBar, out Label labelControl);
 
+            Parameter<double> param = new Parameter<double>(
+                () => (int) Math.Min(max, min + trackBar.Value * step),
+                val => trackBar.Value = (int) ((val - min) / step),
+                function);
+
             trackBar.ValueChanged += (ob, ea) =>
             {
-                // don't go above max val
-                param.Value = Math.Min(max, min + trackBar.Value * step);
+                param.Trigger();
 
                 // Print the current value.
                 // Number of decimal digits proportional to the step param.
@@ -120,8 +139,6 @@ namespace QuickForms
 
         public Parameter<T> ComboBox<T>(string label, IEnumerable<T> values, Action<T> function = null)
         {
-            Parameter<T> param = new Parameter<T>(values.First(), function);
-
             ComboBox comboBox = new ComboBox();
 
             comboBox.Text = label;
@@ -132,7 +149,13 @@ namespace QuickForms
             foreach (T val in values)
                 comboBox.Items.Add(val);
 
-            comboBox.SelectedIndexChanged += (ob, ea) => param.Value = (T) comboBox.SelectedItem;
+            Parameter<T> param = new Parameter<T>(
+                () => (T) comboBox.SelectedItem,
+                val => comboBox.SelectedItem = val,
+                function
+            );
+
+            comboBox.SelectedIndexChanged += (ob, ea) => param.Trigger();
 
             return param;
         }
@@ -181,7 +204,7 @@ namespace QuickForms
             panel.Controls.Add(control);
             panel.Controls.Add(label);
 
-            ResumeLayout(false);
+            ResumeLayout(true);
         }
 
         /// <summary>
@@ -202,16 +225,21 @@ namespace QuickForms
             Name = "QuickForm";
             AutoScaleDimensions = new SizeF(6F, 13F);
             AutoScaleMode = AutoScaleMode.Font;
-            Size = new Size(400, 300);
-
+            
+            AutoSize = true;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            MinimumSize = new Size(400, 0);
+            
             _mainPanel = new Panel();
             _mainPanel.Padding = new Padding(10);
             _mainPanel.Font = new Font("Calibri", 9F, FontStyle.Regular, GraphicsUnit.Point);
             _mainPanel.Dock = DockStyle.Fill;
+            _mainPanel.AutoSize = true;
+            _mainPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
 
             Controls.Add(_mainPanel);
 
-            ResumeLayout(false);
+            ResumeLayout(true);
         }
     }
 }
