@@ -177,7 +177,7 @@ namespace QuickForms
 
             panel.Controls.Add(control);
 
-            ResumeLayout(false);
+            ResumeLayout();
         }
 
         private void AddControl(string labelText, Control control, out Label label)
@@ -204,7 +204,7 @@ namespace QuickForms
             panel.Controls.Add(control);
             panel.Controls.Add(label);
 
-            ResumeLayout(true);
+            ResumeLayout();
         }
 
         /// <summary>
