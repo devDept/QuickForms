@@ -18,7 +18,7 @@ namespace QuickForms
         private readonly Action<T> _setter;
 
         /// <summary>
-        /// Sets the property in the GUI control.
+        /// Gets the property in the GUI control.
         /// </summary>
         private readonly Func<T> _getter;
         
