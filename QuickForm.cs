@@ -121,7 +121,7 @@ namespace QuickForms
             AddControl(label, trackBar, out Label labelControl);
 
             Parameter<double> param = new Parameter<double>(
-                () => (int) Math.Min(max, min + trackBar.Value * step),
+                () => Math.Min(max, min + trackBar.Value * step),
                 val => trackBar.Value = (int) ((val - min) / step),
                 function);
 
