@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Text;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -68,10 +70,14 @@ namespace QuickForms
 
         void Button(string text, Action function);
 
-        IQuickUI Category();
+        IQuickUI Category(string title = null);
+
+        IQuickUI[] Split(int columns=2);
+
+        IQuickUI Label(string text, double percentage = 0.3);
     }
 
-    public class QuickPanel : Panel, IQuickUI
+    public class QuickPanel : RoundedPanel, IQuickUI
     {
         /// <summary>
         /// Default height for controls with labels (e.g., track bars, checkboxes, etc.).
@@ -155,12 +161,12 @@ namespace QuickForms
         public Parameter<double> TrackBar(string label, double min, double max, double step, Action<double> function = null)
         {
             TrackBar trackBar = new TrackBar();
-
-            trackBar.Text = label;
+            
             trackBar.Minimum = 0;
-            trackBar.Maximum = (int)Math.Ceiling((max - min) / step);
+            trackBar.Maximum = (int) Math.Ceiling((max - min) / step);
             trackBar.TickFrequency = 1;
-
+            trackBar.BackColor = BackgroundColor;
+            
             AddControl(label, trackBar, out Label labelControl);
 
             Parameter<double> param = new Parameter<double>(
@@ -172,9 +178,11 @@ namespace QuickForms
             {
                 param.Trigger();
 
-                // Print the current value.
-                // Number of decimal digits proportional to the step param.
-                labelControl.Text = label + $@" [{param.Value.ToString("0." + new string('0', DecimalsToPrint(step)))}]";
+                // labelControl is null if the specified label string is null
+                if (labelControl != null)
+                    // Print the current value.
+                    // Number of decimal digits proportional to the step param.
+                    labelControl.Text = label + $@" [{param.Value.ToString("0." + new string('0', DecimalsToPrint(step)))}]";
             };
 
             return param;
@@ -230,6 +238,8 @@ namespace QuickForms
 
             SuspendLayout();
 
+            control.AutoSize = false;
+            control.Height = height;
             control.Dock = DockStyle.Fill;
 
             panel.Controls.Add(control);
@@ -241,20 +251,28 @@ namespace QuickForms
 
         private void AddControl(string labelText, Control control, out Label label, int height = SMALL_H)
         {
+            if (labelText == null)
+            {
+                label = null;
+                AddSingleControl(control, height);
+                return;
+            }
+
             Panel panel = new Panel();
-
-            label = new Label();
-
+            
             SuspendLayout();
 
-            control.Dock = DockStyle.Fill;
+            control.Dock = DockStyle.Top;
             control.AutoSize = false;
+            control.Height = height;
 
-            label.Width = 150;
-            label.TextAlign = ContentAlignment.MiddleLeft;
-            label.Text = labelText;
-            label.Dock = DockStyle.Left;
-            label.Tag = LabelType.ControlLabel;
+            label = new Label
+            {
+                Text = labelText,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Dock = DockStyle.Left,
+                Tag = new ControlLabel()
+            };
 
             AddPanel(panel, height);
 
@@ -263,7 +281,7 @@ namespace QuickForms
 
             ResumeLayout();
         }
-
+        
         private void AddPanel(Panel panel, int? height = null, int spacing = SPACING)
         {
             Padding padding = Controls.Count > 0 ? new Padding(0, spacing, 0, 0) : Padding.Empty;
@@ -278,17 +296,25 @@ namespace QuickForms
             Controls.SetChildIndex(panel, 0);
         }
 
-        public IQuickUI Category()
+        public IQuickUI Category(string title = null)
         {
             // for a nested panel we use by default a slightly
             // darker background than the current one
             // todo: we may go over 255
-            const int darkenBy = 5;
+            const int darkenBy = 4;
+            const int darkenBorderBy = darkenBy * 5;
 
+            Color back = Color.FromArgb(BackgroundColor.R - darkenBy, BackgroundColor.G - darkenBy, BackgroundColor.B - darkenBy);
+
+            Color border = Color.FromArgb(BackgroundColor.R - darkenBorderBy, BackgroundColor.G - darkenBorderBy, BackgroundColor.B - darkenBorderBy);
+            
             QuickPanel panel = new QuickPanel
             {
-                BackColor = Color.FromArgb(BackColor.R - darkenBy, BackColor.G - darkenBy, BackColor.B - darkenBy),
-                Padding = new Padding(10)
+                BackgroundColor = back,
+                BorderColor = border,
+                Padding = new Padding(SPACING),
+                BorderThickness = 1,
+                Title = title
             };
 
             SuspendLayout();
@@ -297,13 +323,86 @@ namespace QuickForms
 
             wrap.Controls.Add(panel);
             wrap.AutoSize = true;
-            wrap.AutoSizeMode = AutoSizeMode.GrowAndShrink;
 
             AddPanel(wrap);
 
             ResumeLayout();
 
             return panel;
+        }
+
+        public IQuickUI[] Split(int columns=2)
+        {
+            QuickPanel[] quickUIs = new QuickPanel[columns];
+
+            for (int i = 0; i < quickUIs.Length; i++)
+            {
+                quickUIs[i] = new QuickPanel
+                {
+                    BackgroundColor = Color.Transparent,
+                    Padding = Padding.Empty,
+                    BorderThickness = 0
+                };
+            }
+            
+            SuspendLayout();
+
+            TableLayoutPanel wrap = new TableLayoutPanel();
+
+            for (int i = 0; i < quickUIs.Length; i++)
+            {
+                wrap.Controls.Add(quickUIs[i], i, 0);
+                wrap.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f / columns));
+            }
+
+            wrap.AutoSize = true;
+
+            AddPanel(wrap);
+
+            ResumeLayout();
+            
+            return quickUIs;
+        }
+
+        public IQuickUI Label(string text, double percentage = 0.3)
+        {
+            QuickPanel qp = new QuickPanel
+            {
+                Dock = DockStyle.Top,
+                AutoSize = true,
+                Padding = Padding.Empty
+            };
+
+            SuspendLayout();
+
+            Label label = new Label
+            {
+                Text = text,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Dock = DockStyle.Left,
+                Tag = new ControlLabel(percentage)
+            };
+
+            Panel wrap = new Panel
+            {
+                Dock = DockStyle.Top,
+                AutoSize = true,
+
+                // without this the whole wrap panel would collapse
+                // if the quick panel does not contain any controls
+                MinimumSize = new Size(0, label.Height)
+            };
+
+            Controls.Add(wrap);
+
+            wrap.Controls.Add(qp);
+            wrap.Controls.Add(label);
+
+            AddPanel(wrap);
+
+            ResumeLayout();
+
+            return qp;
         }
 
         private void InitializeComponent()
@@ -326,8 +425,8 @@ namespace QuickForms
             {
                 foreach (Label label in panel.Controls.OfType<Label>())
                 {
-                    if (label.Tag is LabelType labelType && labelType == LabelType.ControlLabel)
-                        label.Width = Width / 3;
+                    if (label.Tag is ControlLabel cont)
+                        label.Width = (int) (Width * cont.Percentage);
                 }
             }
 
@@ -363,7 +462,7 @@ namespace QuickForms
             _panel.Dock = DockStyle.Fill;
             _panel.AutoSize = true;
             _panel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-
+            
             Controls.Add(_panel);
 
             ResumeLayout(true);
@@ -399,12 +498,23 @@ namespace QuickForms
             _panel.Button(text, function);
         }
 
-        public IQuickUI Category()
+        public IQuickUI Category(string title = null)
         {
-            return _panel.Category();
+            return _panel.Category(title);
+        }
+
+        public IQuickUI[] Split(int columns = 2)
+        {
+            return _panel.Split(columns);
+        }
+
+        public IQuickUI Label(string text, double percentage = 0.3)
+        {
+            return _panel.Label(text, percentage);
         }
     }
 
+    // group of checkboxes
     internal class CheckBoxGroup<T>
     {
         public CheckBox[] CheckBoxes;
@@ -454,9 +564,239 @@ namespace QuickForms
         }
     }
 
-    // used to check
-    internal enum LabelType
+    // used to check whether a label should be resized, see QuickPanel.OnResize
+    public class ControlLabel
     {
-        ControlLabel
+        public double Percentage { get; set; }
+
+        public ControlLabel(double percentage = 0.3)
+        {
+            if(percentage >= 1 || percentage <= 0)
+                throw new ArgumentException("Percentage must be between 0 and 1.");
+
+            Percentage = percentage;
+        }
+    }
+
+    /// <summary>
+    /// Panel with customizable thickness, border color, and background color.
+    /// Partially made by ChatGPT.
+    /// </summary>
+    public class RoundedPanel : Panel
+    {
+        private const int TITLE_DARKEN_FAC = 3;
+
+        // background, border
+        private Color _backgroundColor = Color.FromArgb(240, 240, 240);
+        private Color _borderColor = Color.FromArgb(230, 230, 230);
+        private int _borderThickness;
+
+        // padding
+        private Padding _padding = new Padding(10);
+
+        // border thickness
+        
+        // title
+        private string _title;
+        private int _titleSize = 30;
+
+        // corner radius
+        // todo: not working (outer border is too thick due to anti aliasing)
+        private int _cornerRadius;
+
+        public new Padding Padding
+        {
+            get => _padding;
+            set
+            {
+                // we store the user-provided padding
+                _padding = value;
+
+                Padding copy = _padding;
+
+                if (_title != null) copy.Top += _titleSize;
+
+                // we set the actual padding after adding the title size
+                base.Padding = copy;
+            }
+        }
+
+        public Color BorderColor
+        {
+            get { return _borderColor; }
+            set
+            {
+                _borderColor = value;
+                Invalidate();
+            }
+        }
+
+        public int BorderThickness
+        {
+            get { return _borderThickness; }
+            set
+            {
+                _borderThickness = value;
+                Invalidate();
+            }
+        }
+
+        public Color BackgroundColor
+        {
+            get { return _backgroundColor; }
+            set
+            {
+                _backgroundColor = value;
+                Invalidate();
+            }
+        }
+
+        public int CornerRadius
+        {
+            get { return _cornerRadius; }
+            set
+            {
+                _cornerRadius = value;
+                Invalidate();
+            }
+        }
+
+        public string Title
+        {
+            get => _title;
+            set
+            {
+                _title = value;
+                Padding = _padding; // update padding
+                Invalidate();
+            }
+        }
+
+        public int TitleSize
+        {
+            get => _titleSize;
+            set
+            {
+                _titleSize = value;
+                Padding = _padding; // update padding
+                Invalidate();
+            }
+        }
+
+        public RoundedPanel()
+        {
+            SetStyle(ControlStyles.UserPaint | ControlStyles.ResizeRedraw | ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
+
+            DoubleBuffered = true;
+            BackColor = Color.Transparent; // we use BackgroundColor instead
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+
+            Graphics g = e.Graphics;
+
+            g.SmoothingMode = SmoothingMode.HighQuality;
+            g.TextRenderingHint = TextRenderingHint.AntiAlias;
+
+            Rectangle clip = ClientRectangle;
+
+            // client rectangle is one pixel bigger than expected
+            // https://stackoverflow.com/questions/5280838/one-pixel-out-onpaint-systemdrawingrectangle-rectangle-this-clientrec
+            clip.Width -= 1;
+            clip.Height -= 1;
+
+            // draw the background
+            using (SolidBrush brush = new SolidBrush(_backgroundColor))
+            {
+                g.FillPath(brush, RoundedRectangle.Create(clip, _cornerRadius));
+            }
+
+            // draw the title if present
+            if (Title != null)
+            {
+                Color titleColor = Color.FromArgb(_backgroundColor.R - TITLE_DARKEN_FAC, _backgroundColor.G - TITLE_DARKEN_FAC, _backgroundColor.B - TITLE_DARKEN_FAC);
+
+                using (SolidBrush brush = new SolidBrush(titleColor))
+                {
+                    Rectangle titleRect = new Rectangle(clip.Left, clip.Top, clip.Width, _titleSize);
+                    g.FillPath(brush, RoundedRectangle.Create(titleRect, new Padding(_cornerRadius, 0, _cornerRadius, 0)));
+                }
+
+                using (SolidBrush brush = new SolidBrush(ForeColor))
+                {
+                    StringFormat format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
+
+                    Font titleFont = new Font(Font.FontFamily, Font.Size * 1.1f, FontStyle.Regular);
+
+                    g.DrawString(Title, titleFont, brush, clip.Left + clip.Width / 2, clip.Top + _titleSize / 2, format);
+                }
+
+                using (Pen pen = new Pen(_borderColor, _borderThickness))
+                {
+                    g.DrawLine(pen, clip.Left + BorderThickness, clip.Top + _titleSize, clip.Right - BorderThickness, clip.Top + _titleSize);
+                }
+            }
+
+            if (BorderThickness > 0)
+            {
+                // daw the border
+                using (Pen pen = new Pen(_borderColor, _borderThickness))
+                {
+                    if (_cornerRadius == 0)
+                    {
+                        // this is not affected by anti aliasing
+                        g.DrawRectangle(pen, clip);
+                    }
+                    else
+                    {
+                        g.DrawPath(pen, RoundedRectangle.Create(clip, _cornerRadius, _borderThickness / 2));
+                    }
+                }
+            }
+
+            g.Flush();
+        }
+    }
+
+    public static class RoundedRectangle
+    {
+        /// <summary>
+        /// Create a rounded rectangle path.
+        /// </summary>
+        public static GraphicsPath Create(Rectangle rectangle, Padding radius, int offset = 0)
+        {
+            GraphicsPath path = new GraphicsPath();
+
+            int
+                l = rectangle.Left + offset,
+                t = rectangle.Top + offset,
+                w = rectangle.Width - offset * 2,
+                h = rectangle.Height - offset * 2;
+
+            if (radius.Left > 0) path.AddArc(l, t, radius.Left * 2, radius.Left * 2, 180, 90); // topleft
+
+            path.AddLine(l + radius.Left, t, l + w - radius.Right, t); // top
+
+            if (radius.Right > 0) path.AddArc(l + w - radius.Right * 2, t, radius.Right * 2, radius.Right * 2, 270, 90); // topright
+
+            path.AddLine(l + w, t + radius.Right, l + w, t + h - radius.Bottom); // right
+
+            if (radius.Bottom > 0) path.AddArc(l + w - radius.Bottom * 2, t + h - radius.Bottom * 2, radius.Bottom * 2, radius.Bottom * 2, 0, 90); // bottomright
+
+            path.AddLine(l + w - radius.Bottom, t + h, l + radius.Top, t + h); // bottom
+
+            if (radius.Top > 0) path.AddArc(l, t + h - l + radius.Top * 2, radius.Top * 2, radius.Top * 2, 90, 90); // bottomleft
+
+            path.AddLine(l, t + h - radius.Top * 2, l, t + radius.Left); // left
+
+            path.CloseFigure();
+
+            return path;
+        }
+
+        public static GraphicsPath Create(Rectangle rectangle, int radius, int offset = 0)
+            => Create(rectangle, new Padding(radius), offset);
     }
 }
