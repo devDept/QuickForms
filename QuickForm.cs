@@ -14,10 +14,8 @@ namespace QuickForms
     /// <typeparam name="T">Type of the parameter.</typeparam>
     public class Parameter<T>
     {
-        /// <summary>
-        /// Invoked after the value was changed via the GUI control.
-        /// </summary>
-        public Action<T> Function { get; set; }
+        // when true, events are not triggered
+        private bool _disableEvents;
 
         /// <summary>
         /// Sets the property in the GUI control.
@@ -29,12 +27,10 @@ namespace QuickForms
         /// </summary>
         private readonly Func<T> _getter;
 
-        public Parameter(Func<T> getter, Action<T> setter, Action<T> function = null)
+        public Parameter(Func<T> getter, Action<T> setter)
         {
             _getter = getter;
             _setter = setter;
-
-            Function = function ?? (val => { });
         }
 
         /// <summary>
@@ -44,13 +40,71 @@ namespace QuickForms
         public T Value
         {
             get => _getter();
-            set => _setter(value);
+            set
+            {
+                // this setter is used by the user via code,
+                // we do not want to trigger the events
+                _disableEvents = true;
+                _setter(value);
+                _disableEvents = false;
+            }
+        }
+        
+        // events
+        private event Action<Parameter<T>> _gotFocus;
+        private event Action<Parameter<T>> _lostFocus;
+        private event Action<Parameter<T>> _click;
+        private event Action<Parameter<T>> _change;
+
+        // invoke specified event (unless events are disabled)
+        private void Invoke(Action<Parameter<T>> action)
+        {
+            if (_disableEvents) return;
+
+            action?.Invoke(this);
+        }
+
+        // called internally by graphical components
+        internal void OnGotFocus() => Invoke(_gotFocus);
+        internal void OnLostFocus() => Invoke(_lostFocus);
+        internal void OnClick() => Invoke(_click);
+        internal void OnChange() => Invoke(_change);
+
+        /// <summary>
+        /// Adds an event handler invoked on focus got.
+        /// </summary>
+        public Parameter<T> FocusGot(Action<Parameter<T>> action)
+        {
+            _gotFocus += action;
+            return this;
         }
 
         /// <summary>
-        /// Triggers the user callback.
+        /// Adds an event handler invoked on focus lost.
         /// </summary>
-        internal void Trigger() => Function(Value);
+        public Parameter<T> FocusLost(Action<Parameter<T>> action)
+        {
+            _lostFocus += action;
+            return this;
+        }
+
+        /// <summary>
+        /// Adds an event handler invoked on click.
+        /// </summary>
+        public Parameter<T> Click(Action<Parameter<T>> action)
+        {
+            _click += action;
+            return this;
+        }
+
+        /// <summary>
+        /// Adds an event handler invoked on value change.
+        /// </summary>
+        public Parameter<T> Change(Action<Parameter<T>> action)
+        {
+            _change += action;
+            return this;
+        }
     }
 
     /// <summary>
@@ -75,6 +129,8 @@ namespace QuickForms
         IQuickUI[] Split(int columns=2);
 
         IQuickUI Label(string text, double percentage = 0.3);
+
+        void Clear();
     }
 
     public class QuickPanel : RoundedPanel, IQuickUI
@@ -115,6 +171,13 @@ namespace QuickForms
             AddSingleControl(button);
         }
 
+        public void AddHandlers<T>(Control control, Parameter<T> parameter)
+        {
+            control.GotFocus += (sender, args) => parameter.OnGotFocus();
+            control.LostFocus += (sender, args) => parameter.OnLostFocus();
+            control.Click += (sender, args) => parameter.OnClick();
+        }
+
         public Parameter<bool> CheckBox(string label, Action<bool> function = null)
         {
             CheckBox checkBox = new CheckBox();
@@ -124,11 +187,13 @@ namespace QuickForms
 
             Parameter<bool> param = new Parameter<bool>(
                 () => checkBox.Checked,
-                val => checkBox.Checked = val,
-                function
-            );
+                val => checkBox.Checked = val
+            )
+                .Change(p => function?.Invoke(p.Value));
 
-            checkBox.CheckedChanged += (ob, ea) => param.Trigger();
+            checkBox.CheckedChanged += (ob, ea) => param.OnChange();
+
+            AddHandlers(checkBox, param);
 
             AddControl(label, checkBox, out _);
 
@@ -141,12 +206,14 @@ namespace QuickForms
 
             Parameter<string> param = new Parameter<string>(
                 () => textbox.Text,
-                text => textbox.Text = text,
-                function
-            );
+                text => textbox.Text = text
+            )
+                .Change(p => function?.Invoke(p.Value))
+                .FocusLost(p => p.OnChange());
 
             textbox.AllowDrop = true;
-            textbox.LostFocus += (ob, ea) => param.Trigger();
+
+            AddHandlers(textbox, param);
 
             AddControl(label, textbox, out _);
 
@@ -171,12 +238,12 @@ namespace QuickForms
 
             Parameter<double> param = new Parameter<double>(
                 () => Math.Min(max, min + trackBar.Value * step),
-                val => trackBar.Value = (int)((val - min) / step),
-                function);
+                val => trackBar.Value = (int)((val - min) / step))
+                .Change(p => function?.Invoke(p.Value));
 
             trackBar.ValueChanged += (ob, ea) =>
             {
-                param.Trigger();
+                param.OnChange();
 
                 // labelControl is null if the specified label string is null
                 if (labelControl != null)
@@ -184,6 +251,8 @@ namespace QuickForms
                     // Number of decimal digits proportional to the step param.
                     labelControl.Text = label + $@" [{param.Value.ToString("0." + new string('0', DecimalsToPrint(step)))}]";
             };
+
+            AddHandlers(trackBar, param);
 
             return param;
         }
@@ -204,11 +273,12 @@ namespace QuickForms
 
             Parameter<T> param = new Parameter<T>(
                 () => (T)comboBox.SelectedItem,
-                val => comboBox.SelectedItem = val,
-                function
+                val => comboBox.SelectedItem = val
             );
 
-            comboBox.SelectedIndexChanged += (ob, ea) => param.Trigger();
+            comboBox.SelectedIndexChanged += (ob, ea) => param.OnChange();
+
+            AddHandlers(comboBox, param);
 
             return param;
         }
@@ -217,7 +287,7 @@ namespace QuickForms
         {
             CheckBoxGroup<T> cbg = new CheckBoxGroup<T>(dict);
 
-            Parameter<T> param = new Parameter<T>(cbg.GetValue, cbg.SetValue, function);
+            Parameter<T> param = new Parameter<T>(cbg.GetValue, cbg.SetValue);
 
             for (var i = 0; i < cbg.CheckBoxes.Length; i++)
             {
@@ -227,7 +297,9 @@ namespace QuickForms
                 AddSingleControl(btn, MEDIUM_H, SPACING / (i > 0 ? 3 : 1));
             }
 
-            cbg.OnChange = function;
+            cbg.OnChange = (ob) => param.OnChange();
+
+            param.Change(p => function?.Invoke(p.Value));
 
             return param;
         }
@@ -266,12 +338,11 @@ namespace QuickForms
             control.AutoSize = false;
             control.Height = height;
 
-            label = new Label
+            label = new ControlLabel(Width)
             {
                 Text = labelText,
                 TextAlign = ContentAlignment.MiddleLeft,
-                Dock = DockStyle.Left,
-                Tag = new ControlLabel()
+                Dock = DockStyle.Left
             };
 
             AddPanel(panel, height);
@@ -370,19 +441,19 @@ namespace QuickForms
             {
                 Dock = DockStyle.Top,
                 AutoSize = true,
-                Padding = Padding.Empty
+                Padding = Padding.Empty,
+                BackgroundColor = Color.Transparent
             };
 
             SuspendLayout();
 
-            Label label = new Label
+            ControlLabel label = new ControlLabel(Width, percentage)
             {
                 Text = text,
                 TextAlign = ContentAlignment.MiddleLeft,
-                Dock = DockStyle.Left,
-                Tag = new ControlLabel(percentage)
+                Dock = DockStyle.Left
             };
-
+            
             Panel wrap = new Panel
             {
                 Dock = DockStyle.Top,
@@ -392,9 +463,7 @@ namespace QuickForms
                 // if the quick panel does not contain any controls
                 MinimumSize = new Size(0, label.Height)
             };
-
-            Controls.Add(wrap);
-
+            
             wrap.Controls.Add(qp);
             wrap.Controls.Add(label);
 
@@ -403,6 +472,11 @@ namespace QuickForms
             ResumeLayout();
 
             return qp;
+        }
+
+        public void Clear()
+        {
+            Controls.Clear();
         }
 
         private void InitializeComponent()
@@ -423,10 +497,9 @@ namespace QuickForms
 
             foreach (Panel panel in Controls.OfType<Panel>())
             {
-                foreach (Label label in panel.Controls.OfType<Label>())
+                foreach (ControlLabel label in panel.Controls.OfType<ControlLabel>())
                 {
-                    if (label.Tag is ControlLabel cont)
-                        label.Width = (int) (Width * cont.Percentage);
+                    label.Update(Width);
                 }
             }
 
@@ -512,6 +585,35 @@ namespace QuickForms
         {
             return _panel.Label(text, percentage);
         }
+
+        public void Clear()
+        {
+            _panel.Clear();
+        }
+    }
+
+    /// <summary>
+    /// Utility class to give a name to an object. It may be used
+    /// for example with <see cref="IQuickUI.ComboBox{T}"/> to
+    /// display a name for each object.
+    /// </summary>
+    /// <typeparam name="T">Type for the named object.</typeparam>
+    public class Named<T>
+    {
+        public string Name { get; set; }
+
+        public T Value { get; set; }
+
+        public Named(string name, T value)
+        {
+            Name = name;
+            Value = value;
+        }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     // group of checkboxes
@@ -565,16 +667,23 @@ namespace QuickForms
     }
 
     // used to check whether a label should be resized, see QuickPanel.OnResize
-    public class ControlLabel
+    public class ControlLabel : Label
     {
         public double Percentage { get; set; }
 
-        public ControlLabel(double percentage = 0.3)
+        public ControlLabel(int initialWidth, double percentage = 0.3)
         {
             if(percentage >= 1 || percentage <= 0)
                 throw new ArgumentException("Percentage must be between 0 and 1.");
 
             Percentage = percentage;
+            
+            Update(initialWidth);
+        }
+
+        public void Update(int totalWidth)
+        {
+            Width = (int) (totalWidth * Percentage);
         }
     }
 
