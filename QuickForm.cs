@@ -231,7 +231,7 @@ namespace QuickForms
             
             trackBar.Minimum = 0;
             trackBar.Maximum = (int) Math.Ceiling((max - min) / step);
-            trackBar.TickFrequency = 1;
+            trackBar.TickFrequency = (int)((max - min) / step) / 10; // we use 10 ticks by default
             trackBar.BackColor = BackgroundColor;
             
             AddControl(label, trackBar, out Label labelControl);
@@ -278,8 +278,8 @@ namespace QuickForms
 
             if (function != null)
                 param.Change(p => function.Invoke(p.Value));
-
-            param.Change(p => function?.Invoke(p.Value));
+            
+            comboBox.SelectedIndex = 0;
             comboBox.SelectedIndexChanged += (ob, ea) => param.OnChange();
 
             AddHandlers(comboBox, param);
@@ -606,7 +606,7 @@ namespace QuickForms
     {
         public string Name { get; set; }
 
-        public T Value { get; set; }
+        public readonly T Value;
 
         public Named(string name, T value)
         {
@@ -617,6 +617,16 @@ namespace QuickForms
         public override string ToString()
         {
             return Name;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Value.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
         }
     }
 
