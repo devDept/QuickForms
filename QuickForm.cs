@@ -276,6 +276,10 @@ namespace QuickForms
                 val => comboBox.SelectedItem = val
             );
 
+            if (function != null)
+                param.Change(p => function.Invoke(p.Value));
+
+            param.Change(p => function?.Invoke(p.Value));
             comboBox.SelectedIndexChanged += (ob, ea) => param.OnChange();
 
             AddHandlers(comboBox, param);
