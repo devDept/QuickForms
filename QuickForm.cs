@@ -889,7 +889,7 @@ namespace QuickForms
 
             if (BorderThickness > 0)
             {
-                // daw the border
+                // draw the border
                 using (Pen pen = new Pen(_borderColor, _borderThickness * scale))
                 {
                     g.DrawPath(pen, RoundedRectangle.Create(clip, _cornerRadius * scale, _borderThickness * scale / 2.0f));
