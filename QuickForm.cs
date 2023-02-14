@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Linq;
 using System.Windows.Forms;
@@ -105,6 +106,11 @@ namespace QuickForms
             _change += action;
             return this;
         }
+
+        /// <summary>
+        /// Implicitly convert the parameter to its value.
+        /// </summary>
+        public static implicit operator T(Parameter<T> par) => par.Value;
     }
 
     /// <summary>
@@ -233,7 +239,7 @@ namespace QuickForms
             trackBar.Maximum = (int) Math.Ceiling((max - min) / step);
             trackBar.TickFrequency = (int)((max - min) / step) / 10; // we use 10 ticks by default
             trackBar.BackColor = BackgroundColor;
-            
+
             AddControl(label, trackBar, out Label labelControl);
 
             Parameter<double> param = new Parameter<double>(
@@ -379,7 +385,10 @@ namespace QuickForms
             const int darkenBy = 4;
             const int darkenBorderBy = darkenBy * 5;
 
-            Color back = Color.FromArgb(BackgroundColor.R - darkenBy, BackgroundColor.G - darkenBy, BackgroundColor.B - darkenBy);
+            Color back = Color.FromArgb(
+                BackgroundColor.R - darkenBy, 
+                BackgroundColor.G - darkenBy, 
+                BackgroundColor.B - darkenBy);
 
             Color border = Color.FromArgb(BackgroundColor.R - darkenBorderBy, BackgroundColor.G - darkenBorderBy, BackgroundColor.B - darkenBorderBy);
             
@@ -389,7 +398,8 @@ namespace QuickForms
                 BorderColor = border,
                 Padding = new Padding(SPACING),
                 BorderThickness = 1,
-                Title = title
+                Title = title,
+                CornerRadius = 3
             };
 
             SuspendLayout();
@@ -487,11 +497,12 @@ namespace QuickForms
         {
             SuspendLayout();
 
-            Font = new Font("Calibri", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            Font = new Font("Calibri", 9f, FontStyle.Regular, GraphicsUnit.Point);
+            TitleFont = new Font("Calibri", 9.5f, FontStyle.Regular, GraphicsUnit.Point);
             Dock = DockStyle.Top;
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
-
+            
             ResumeLayout();
         }
 
@@ -533,7 +544,7 @@ namespace QuickForms
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowOnly;
             MinimumSize = new Size(400, 0);
-
+            
             _panel = new QuickPanel();
             _panel.Padding = new Padding(10);
             _panel.Dock = DockStyle.Fill;
@@ -716,16 +727,19 @@ namespace QuickForms
 
         // padding
         private Padding _padding = new Padding(10);
-
-        // border thickness
         
         // title
         private string _title;
         private int _titleSize = 30;
 
         // corner radius
-        // todo: not working (outer border is too thick due to anti aliasing)
         private int _cornerRadius;
+
+        // image
+        private Bitmap _bitmap = null;
+
+        // title font
+        private Font _titleFont = null;
 
         public new Padding Padding
         {
@@ -806,34 +820,54 @@ namespace QuickForms
             }
         }
 
+        public Font TitleFont
+        {
+            get => _titleFont;
+            set
+            {
+                _titleFont = value;
+                Invalidate();
+            }
+        }
+
+
         public RoundedPanel()
         {
             SetStyle(ControlStyles.UserPaint | ControlStyles.ResizeRedraw | ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
             DoubleBuffered = true;
             BackColor = Color.Transparent; // we use BackgroundColor instead
+
+            UpdateBitmap();
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        protected override void OnResize(EventArgs eventargs)
         {
-            base.OnPaint(e);
+            UpdateBitmap();
+            base.OnResize(eventargs);
+        }
 
-            Graphics g = e.Graphics;
+        private void UpdateBitmap()
+        {
+            if (ClientRectangle.Width <= 0 || ClientRectangle.Height <= 0) return;
 
-            g.SmoothingMode = SmoothingMode.HighQuality;
-            g.TextRenderingHint = TextRenderingHint.AntiAlias;
+            _bitmap?.Dispose();
 
-            Rectangle clip = ClientRectangle;
+            Rectangle clip = new Rectangle(new Point(0, 0), ClientRectangle.Size);
 
-            // client rectangle is one pixel bigger than expected
-            // https://stackoverflow.com/questions/5280838/one-pixel-out-onpaint-systemdrawingrectangle-rectangle-this-clientrec
-            clip.Width -= 1;
-            clip.Height -= 1;
+            int scale = 2;
 
+            clip.Width *= scale;
+            clip.Height *= scale;
+
+            Bitmap image = new Bitmap(clip.Width, clip.Height);
+
+            Graphics g = Graphics.FromImage(image);
+            
             // draw the background
             using (SolidBrush brush = new SolidBrush(_backgroundColor))
             {
-                g.FillPath(brush, RoundedRectangle.Create(clip, _cornerRadius));
+                g.FillPath(brush, RoundedRectangle.Create(clip, _cornerRadius * scale, _borderThickness * scale / 2.0f));
             }
 
             // draw the title if present
@@ -843,43 +877,49 @@ namespace QuickForms
 
                 using (SolidBrush brush = new SolidBrush(titleColor))
                 {
-                    Rectangle titleRect = new Rectangle(clip.Left, clip.Top, clip.Width, _titleSize);
-                    g.FillPath(brush, RoundedRectangle.Create(titleRect, new Padding(_cornerRadius, 0, _cornerRadius, 0)));
+                    Rectangle titleRect = new Rectangle(clip.Left, clip.Top, clip.Width, _titleSize * scale);
+                    g.FillPath(brush, RoundedRectangle.Create(titleRect, (_cornerRadius * scale, _cornerRadius * scale, 0, 0)));
                 }
 
-                using (SolidBrush brush = new SolidBrush(ForeColor))
+                using (Pen pen = new Pen(_borderColor, _borderThickness * scale))
                 {
-                    StringFormat format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
-
-                    Font titleFont = new Font(Font.FontFamily, Font.Size * 1.1f, FontStyle.Regular);
-
-                    g.DrawString(Title, titleFont, brush, clip.Left + clip.Width / 2, clip.Top + _titleSize / 2, format);
-                }
-
-                using (Pen pen = new Pen(_borderColor, _borderThickness))
-                {
-                    g.DrawLine(pen, clip.Left + BorderThickness, clip.Top + _titleSize, clip.Right - BorderThickness, clip.Top + _titleSize);
+                    g.DrawLine(pen, clip.Left + BorderThickness * scale, clip.Top + _titleSize * scale, clip.Right - BorderThickness * scale, clip.Top + _titleSize * scale);
                 }
             }
 
             if (BorderThickness > 0)
             {
                 // daw the border
-                using (Pen pen = new Pen(_borderColor, _borderThickness))
+                using (Pen pen = new Pen(_borderColor, _borderThickness * scale))
                 {
-                    if (_cornerRadius == 0)
-                    {
-                        // this is not affected by anti aliasing
-                        g.DrawRectangle(pen, clip);
-                    }
-                    else
-                    {
-                        g.DrawPath(pen, RoundedRectangle.Create(clip, _cornerRadius, _borderThickness / 2));
-                    }
+                    g.DrawPath(pen, RoundedRectangle.Create(clip, _cornerRadius * scale, _borderThickness * scale / 2.0f));
                 }
             }
 
             g.Flush();
+            
+            _bitmap = image;
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            
+            e.Graphics.DrawImage(_bitmap, ClientRectangle, new Rectangle(new Point(0, 0), _bitmap.Size), GraphicsUnit.Pixel);
+
+            if (Title != null)
+            {
+                Rectangle textRect = new Rectangle(ClientRectangle.Left, ClientRectangle.Top, ClientRectangle.Width, _titleSize);
+                TextRenderer.DrawText(e.Graphics, Title, TitleFont ?? Font, textRect, ForeColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+            }
+
+            e.Graphics.Flush();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _bitmap?.Dispose();
+            base.Dispose(disposing);
         }
     }
 
@@ -888,38 +928,46 @@ namespace QuickForms
         /// <summary>
         /// Create a rounded rectangle path.
         /// </summary>
-        public static GraphicsPath Create(Rectangle rectangle, Padding radius, int offset = 0)
+        public static GraphicsPath Create(RectangleF rectangle, (float, float, float, float) radius, float offset = 0)
         {
             GraphicsPath path = new GraphicsPath();
 
-            int
+            float
                 l = rectangle.Left + offset,
                 t = rectangle.Top + offset,
                 w = rectangle.Width - offset * 2,
                 h = rectangle.Height - offset * 2;
 
-            if (radius.Left > 0) path.AddArc(l, t, radius.Left * 2, radius.Left * 2, 180, 90); // topleft
+            if (radius.Item1 > 0)
+                // top left
+                path.AddArc(l, t, radius.Item1 * 2, radius.Item1 * 2, 180, 90); 
 
-            path.AddLine(l + radius.Left, t, l + w - radius.Right, t); // top
+            path.AddLine(l + radius.Item1, t, l + w - radius.Item2, t); // top
 
-            if (radius.Right > 0) path.AddArc(l + w - radius.Right * 2, t, radius.Right * 2, radius.Right * 2, 270, 90); // topright
+            if (radius.Item2 > 0)
+                // top right
+                path.AddArc(l + w - radius.Item2 * 2, t, radius.Item2 * 2, radius.Item2 * 2, 270, 90); 
 
-            path.AddLine(l + w, t + radius.Right, l + w, t + h - radius.Bottom); // right
+            path.AddLine(l + w, t + radius.Item2, l + w, t + h - radius.Item3); // right
 
-            if (radius.Bottom > 0) path.AddArc(l + w - radius.Bottom * 2, t + h - radius.Bottom * 2, radius.Bottom * 2, radius.Bottom * 2, 0, 90); // bottomright
+            if (radius.Item3 > 0)
+                // bottom right
+                path.AddArc(l + w - radius.Item3 * 2, t + h - radius.Item3 * 2, radius.Item3 * 2, radius.Item3 * 2, 0, 90); 
 
-            path.AddLine(l + w - radius.Bottom, t + h, l + radius.Top, t + h); // bottom
+            path.AddLine(l + w - radius.Item3, t + h, l + radius.Item4, t + h); // bottom
 
-            if (radius.Top > 0) path.AddArc(l, t + h - l + radius.Top * 2, radius.Top * 2, radius.Top * 2, 90, 90); // bottomleft
+            if (radius.Item4 > 0)
+                // bottom left
+                path.AddArc(l, t + h - radius.Item4 * 2, radius.Item4 * 2, radius.Item4 * 2, 90, 90); 
 
-            path.AddLine(l, t + h - radius.Top * 2, l, t + radius.Left); // left
+            path.AddLine(l, t + h - radius.Item4 * 2, l, t + radius.Item1); // left
 
             path.CloseFigure();
 
             return path;
         }
 
-        public static GraphicsPath Create(Rectangle rectangle, int radius, int offset = 0)
-            => Create(rectangle, new Padding(radius), offset);
+        public static GraphicsPath Create(Rectangle rectangle, float radius, float offset = 0)
+            => Create(rectangle, (radius, radius, radius, radius), offset);
     }
 }
