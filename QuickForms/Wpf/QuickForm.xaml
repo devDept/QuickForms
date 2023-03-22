@@ -5,10 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:QuickForms.Wpf"
         mc:Ignorable="d"
-        Title="QuickForm"
+        Title=""
         Height="450" Width="400"
         UseLayoutRounding="True"
         SizeToContent="Height"
+        Icon="/QuickForms;component/Icon.ico"
         >
 
     <Window.Resources>

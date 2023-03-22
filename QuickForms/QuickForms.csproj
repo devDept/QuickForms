@@ -11,18 +11,31 @@
 		<Title>QuickForms</Title>
 		<Authors>devDept</Authors>
 		<Description>Prototype WinForm and WPF user interfaces quickly via code.</Description>
-		<PackageIcon>qf.png</PackageIcon>
+		<PackageIcon>Icon.png</PackageIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Include="..\..\..\..\Downloads\qf.png">
+	  <Resource Include="Icon.ico" />
+	  <Resource Include="Icon.png">
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
-	  </None>
+	  </Resource>
+	  <Resource Include="Wpf\Elements\ColorPicker\Images\transparentbg_mini.png" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Resource Include="Wpf\Elements\ColorPicker\Images\transparentbg_mini.png" />
+	  <Compile Update="Properties\Resources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resources.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Properties\Resources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 </Project>

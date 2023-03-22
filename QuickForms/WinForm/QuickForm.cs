@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using QuickForms.Core;
+using QuickForms.Properties;
 
 namespace QuickForms.WinForm
 {
@@ -28,6 +29,7 @@ namespace QuickForms.WinForm
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowOnly;
             MinimumSize = new Size(400, 0);
+            Icon = Resources.Icon;
 
             QuickControl control = new QuickControl();
             control.Dock = DockStyle.Fill;
