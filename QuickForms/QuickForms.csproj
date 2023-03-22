@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFrameworks>net6.0-windows;net472</TargetFrameworks>
+		<LangVersion>10.0</LangVersion>
+		<Nullable>enable</Nullable>
+		<UseWPF>true</UseWPF>
+		<UseWindowsForms>true</UseWindowsForms>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Title>QuickForms</Title>
+		<Authors>devDept</Authors>
+		<Description>Prototype WinForm and WPF user interfaces quickly via code.</Description>
+		<PackageIcon>qf.png</PackageIcon>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Include="..\..\..\..\Downloads\qf.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="Wpf\Elements\ColorPicker\Images\transparentbg_mini.png" />
+	</ItemGroup>
+
+</Project>

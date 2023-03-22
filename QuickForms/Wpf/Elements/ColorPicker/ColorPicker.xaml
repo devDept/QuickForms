@@ -1,0 +1,65 @@
+﻿<UserControl x:Class="QuickForms.Wpf.Elements.ColorPicker.ColorPicker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:QuickForms.Wpf.Elements.ColorPicker"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             x:Name="Uc"
+             UseLayoutRounding="True">
+
+    <UserControl.Template>
+        <ControlTemplate TargetType="{x:Type local:ColorPicker}">
+            <Border BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" CornerRadius="{TemplateBinding CornerRadius}">
+                <ContentPresenter/>
+            </Border>
+        </ControlTemplate>
+    </UserControl.Template>
+
+    <Border>
+    
+        <Button x:Name="Btn" Click="Btn_OnClick" >
+
+            <Button.Background>
+                <SolidColorBrush Color="{Binding Path=ActiveColor, RelativeSource={RelativeSource AncestorType={x:Type local:ColorPicker}}}"></SolidColorBrush>
+            </Button.Background>
+
+            <Button.Template>
+                
+                <ControlTemplate TargetType="{x:Type Button}">
+                    
+                    <Border CornerRadius="{Binding Path=CornerRadius, RelativeSource={RelativeSource AncestorType={x:Type local:ColorPicker}}}">
+                        
+                        <Border.Background>
+                            <ImageBrush Opacity="1"
+                                        ImageSource="Images/transparentbg_mini.png"
+                                        TileMode="Tile" Viewport="0,0,8,8"
+                                        ViewportUnits="Absolute" />
+                        </Border.Background>
+                            <Border Background="{TemplateBinding Background}" CornerRadius="1">
+                        </Border>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+
+            <Button.ContextMenu>
+                <ContextMenu Placement="Bottom">
+                    <ContextMenu.Template>
+                        <ControlTemplate>
+                            <Border MinWidth="300" 
+                                    Background="{Binding Path=Background, RelativeSource={RelativeSource AncestorType={x:Type local:ColorPicker}}}"
+                                    CornerRadius="{Binding Path=CornerRadius, RelativeSource={RelativeSource AncestorType={x:Type local:ColorPicker}}}"
+                                    BorderBrush="{Binding Path=BorderBrush, RelativeSource={RelativeSource AncestorType={x:Type local:ColorPicker}}}"
+                                    BorderThickness="{Binding Path=BorderThickness, RelativeSource={RelativeSource AncestorType={x:Type local:ColorPicker}}}"
+                                    Padding="5 10 10 10">
+
+                                <local:ColorSliders x:Name="Sliders" ColorChanged="Sliders_OnColorChanged" SelectedColor="{Binding Path=ActiveColor, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type local:ColorPicker}}}"></local:ColorSliders>
+                            </Border>
+                        </ControlTemplate>
+                    </ContextMenu.Template>
+                </ContextMenu>
+            </Button.ContextMenu>
+        </Button>
+    </Border>
+</UserControl>

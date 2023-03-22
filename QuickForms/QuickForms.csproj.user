@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup />
+  <ItemGroup>
+    <Compile Update="WinForm\QuickForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Wpf\Elements\Category.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Wpf\Elements\ColorPicker\ColorPicker.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Wpf\QuickControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Wpf\Elements\Category.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Wpf\Elements\ColorPicker\ColorPicker.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Wpf\QuickControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Wpf\Themes\LightTheme.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Wpf\Themes\DarkTheme.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+</Project>
