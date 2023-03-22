@@ -69,7 +69,7 @@ static void App()
     qf.Button("Change theme", () =>
     {
         Themes newTheme = theme == Themes.Dark ? Themes.Light : Themes.Dark;
-        qf.ChangeTheme(newTheme);
+        qf.SetTheme(newTheme);
         theme = newTheme;
     });
 

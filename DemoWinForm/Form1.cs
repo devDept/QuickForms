@@ -1,3 +1,5 @@
+using QuickForms.Wpf;
+
 namespace DemoWinForm
 {
     public partial class Form1 : Form
@@ -16,7 +18,10 @@ namespace DemoWinForm
             a.Value = true;
 
             qf.Button("Hello darkness", () => { a.Value = !a.Value; });
-            qf.Button("Hello darkness", () => { MessageBox.Show("Pipo"); });
+            qf.Button("Light", () =>
+            {
+                qf.SetTheme(Themes.Light);
+            });
         }
     }
 }

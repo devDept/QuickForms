@@ -73,11 +73,11 @@ namespace QuickForms.Wpf
             QuickUI.Clear();
         }
         
-        public void ChangeTheme(Themes theme)
+        public void SetTheme(Themes theme)
         {
             Resources = Theme.GetThemeDictionary(theme);
 
-            QuickUI.ChangeTheme(theme);
+            QuickUI.SetTheme(theme);
         }
     }
 }

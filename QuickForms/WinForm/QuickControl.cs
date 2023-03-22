@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms.Integration;
 using QuickForms.Core;
+using QuickForms.Wpf;
 
 namespace QuickForms.WinForm
 {
     public class QuickControl : ElementHost, IQuickUI
     {
-        private readonly IQuickUI _quickControlWpf;
+        private readonly Wpf.QuickControl _quickControlWpf;
 
         public QuickControl()
         {
             _quickControlWpf = new Wpf.QuickControl();
 
-            Child = _quickControlWpf as Wpf.QuickControl;
+            Child = _quickControlWpf;
         }
 
         public new double Padding
@@ -76,6 +77,11 @@ namespace QuickForms.WinForm
         public void Clear()
         {
             _quickControlWpf.Clear();
+        }
+
+        public void SetTheme(Themes theme)
+        {
+            _quickControlWpf.SetTheme(theme);
         }
     }
 }

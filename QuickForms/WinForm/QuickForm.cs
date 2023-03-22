@@ -4,12 +4,13 @@ using System.Drawing;
 using System.Windows.Forms;
 using QuickForms.Core;
 using QuickForms.Properties;
+using QuickForms.Wpf;
 
 namespace QuickForms.WinForm
 {
     public class QuickForm : Form, IQuickUI
     {
-        private IQuickUI _quickControl;
+        private QuickControl _quickControl;
 
         public QuickForm()
         {
@@ -100,6 +101,11 @@ namespace QuickForms.WinForm
         public void Clear()
         {
             _quickControl.Clear();
+        }
+
+        public void SetTheme(Themes theme)
+        {
+            _quickControl.SetTheme(theme);
         }
     }
 }
