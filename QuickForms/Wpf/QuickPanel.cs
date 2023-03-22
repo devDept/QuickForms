@@ -113,7 +113,7 @@ namespace QuickForms.Wpf
             return p;
         }
 
-        public Parameter<double> TrackBar(string label, double min, double max, double step, Action<double>? function = null)
+        public Parameter<double> TrackBar(string label, double min, double max, double? step = null, Action<double>? function = null)
         {
             var lab = new Label
             {
@@ -125,8 +125,14 @@ namespace QuickForms.Wpf
             var track = new QuickSlider(min, max)
             {
                 Height = Options.ComponentHeight,
-                VerticalContentAlignment = VerticalAlignment.Center
+                VerticalContentAlignment = VerticalAlignment.Center,
             };
+
+            if (step != null)
+            {
+                track.TickFrequency = step.Value;
+                track.IsSnapToTickEnabled = true;
+            }
 
             Add(lab, track);
             

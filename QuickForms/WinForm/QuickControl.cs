@@ -34,7 +34,7 @@ namespace QuickForms.WinForm
             return _quickControlWpf.TextBox(label, function);
         }
 
-        public Parameter<double> TrackBar(string label, double min, double max, double step, Action<double>? function = null)
+        public Parameter<double> TrackBar(string label, double min, double max, double? step = null, Action<double>? function = null)
         {
             return _quickControlWpf.TrackBar(label, min, max, step, function);
         }

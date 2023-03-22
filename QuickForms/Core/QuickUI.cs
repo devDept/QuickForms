@@ -15,7 +15,7 @@ namespace QuickForms.Core
 
         Parameter<string> TextBox(string label, Action<string>? function = null);
 
-        Parameter<double> TrackBar(string label, double min, double max, double step, Action<double>? function = null);
+        Parameter<double> TrackBar(string label, double min, double max, double? step = null, Action<double>? function = null);
 
         Parameter<T> ComboBox<T>(string label, IEnumerable<T> values, Action<T>? function = null);
 
