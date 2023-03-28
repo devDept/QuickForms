@@ -16,10 +16,18 @@
 		<PackageIcon>Icon.png</PackageIcon>
 		<AssemblyVersion></AssemblyVersion>
 		<FileVersion></FileVersion>
-		<Version>1.0.0-alpha</Version>
+		<Version>1.0.1-alpha</Version>
 		<PackageProjectUrl>https://github.com/devdept/QuickForms</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/devdept/QuickForms</RepositoryUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Include="..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
 
 	<ItemGroup>
 	  <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
