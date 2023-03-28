@@ -1,32 +1,28 @@
 ﻿using System.Drawing;
+using System.Runtime.Serialization;
 using System.Windows;
 using QuickForms.Core;
 using QuickForms.Wpf;
 
-[STAThread]
-static void App()
+Thread thread = new Thread(() =>
 {
-    Application app = new Application();
-
     QuickForm qf = new QuickForm();
 
-    qf.Show();
+    var a = qf.AddCheckBox("Hello");
 
-    var a = qf.CheckBox("Hello");
-
-    qf.CheckBox("Hello");
+    qf.AddCheckBox("Hello");
 
     a.Value = true;
 
-    qf.Button("Hello!", () => { a.Value = !a.Value; });
-    qf.Button("Hello!", () => { qf.Button("Hello bro!", () => {}); });
+    qf.AddButton("Hello!", () => { a.Value = !a.Value; });
+    qf.AddButton("Hello!", () => { qf.AddButton("Hello bro!", () => {}); });
 
-    qf.TrackBar("Hello", 1, 9, 1, d =>
+    qf.AddTrackBar("Hello", 1, 9, 1, d =>
     {
         Console.WriteLine(d);
     });
 
-    var cb = qf.ComboBox("Label", new string[]
+    var cb = qf.AddComboBox("Label", new string[]
     {
         "Hello",
         "World"
@@ -37,45 +33,75 @@ static void App()
 
     cb.Value = "Reeas";
 
-    qf.TextBox("Hello", t =>
+    qf.AddComboBox("Values", new []
+    {
+        0.Name("Zero"),
+        1.Name("Uno")
+    }, i =>
+    {
+        Console.WriteLine(i);
+    });
+
+    qf.AddTextBox("Hello", t =>
     {
         Console.WriteLine(t);
     });
 
-    qf.ColorPicker(Color.Lime, (col) =>
+    qf.AddColorPicker("Color", Color.Lime, (col) =>
     {
         Console.WriteLine(col.GetHue());
     });
 
-    var qp = qf.Category("Cats & Dogs");
+    var qp = qf.AddCategory("Cats & Dogs");
 
-    qp.Button("Hola", () => {});
+    qp.AddButton("Hola", () => {});
 
-    qp = qp.Category("Nasty nested category with very long title");
+    qp = qp.AddCategory("Nasty nested category with very long title");
 
     var copy = qp;
 
-    qp.Button("Delete", () =>
+    qp.AddButton("Delete", () =>
     {
         copy.Clear();
     });
 
-    qp = qp.Category();
+    qp = qp.AddCategory();
 
-    qp.CheckBox("Yes or no?");
+    qp.AddCheckBox("Yes or no?");
 
+    qp = qf.AddCategory("Options");
+
+    qp.AddTrackBar(null, 0, 10, 1);
+    qp.AddColorPicker();
+    qp.AddCheckBox();
+    qp.AddTextBox();
+
+    var table = qf.AddCategory();
+    table.Padding = 5;
+    table.Options.VerticalSpacing = 0;
+
+    for (int r = 0; r < 5; r++)
+    {
+        var row = table.Split(5);
+
+        foreach (IQuickUI col in row)
+        {
+            col.AddTextBox();
+            col.Padding = 5;
+        }
+    }
+    
     Themes theme = Themes.Dark;
 
-    qf.Button("Change theme", () =>
+    qf.AddButton("Change theme", () =>
     {
         Themes newTheme = theme == Themes.Dark ? Themes.Light : Themes.Dark;
         qf.SetTheme(newTheme);
         theme = newTheme;
     });
 
-    app.Run(qf);
-}
+    new Application().Run(qf);
+});
 
-Thread thread = new Thread(App);
 thread.SetApartmentState(ApartmentState.STA);
 thread.Start();

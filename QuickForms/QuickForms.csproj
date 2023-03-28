@@ -12,6 +12,9 @@
 		<Authors>devDept</Authors>
 		<Description>Prototype WinForm and WPF user interfaces quickly via code.</Description>
 		<PackageIcon>Icon.png</PackageIcon>
+		<AssemblyVersion></AssemblyVersion>
+		<FileVersion></FileVersion>
+		<Version>1.0.0-alpha</Version>
 	</PropertyGroup>
 
 	<ItemGroup>

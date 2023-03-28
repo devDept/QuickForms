@@ -24,54 +24,51 @@ namespace QuickForms.WinForm
             set => _quickControlWpf.Padding = value;
         }
 
-        public Parameter<bool> CheckBox(string label, Action<bool>? function = null)
+        public QuickOptions Options
         {
-            return _quickControlWpf.CheckBox(label, function);
+            get => _quickControlWpf.Options;
+            set => _quickControlWpf.Options = value;
         }
 
-        public Parameter<string> TextBox(string label, Action<string>? function = null)
+        public Parameter<bool> AddCheckBox(string? label = null, Action<bool>? function = null)
         {
-            return _quickControlWpf.TextBox(label, function);
+            return _quickControlWpf.AddCheckBox(label, function);
         }
 
-        public Parameter<double> TrackBar(string label, double min, double max, double? step = null, Action<double>? function = null)
+        public Parameter<string> AddTextBox(string? label = null, Action<string>? function = null)
         {
-            return _quickControlWpf.TrackBar(label, min, max, step, function);
+            return _quickControlWpf.AddTextBox(label, function);
         }
 
-        public Parameter<T> ComboBox<T>(string label, IEnumerable<T> values, Action<T>? function = null)
+        public Parameter<double> AddTrackBar(string? label, double min, double max, double? step = null,
+            Action<double>? function = null)
         {
-            return _quickControlWpf.ComboBox(label, values, function);
+            return _quickControlWpf.AddTrackBar(label, min, max, step, function);
         }
 
-        public Parameter<T> RadioButtons<T>(IDictionary<T, string> values, Action<T>? function = null)
+        public Parameter<T> AddComboBox<T>(string? label, IEnumerable<T> values, Action<T>? function = null)
         {
-            return _quickControlWpf.RadioButtons(values, function);
+            return _quickControlWpf.AddComboBox(label, values, function);
         }
 
-        public void Button(string text, Action function)
+        public void AddButton(string? text, Action function)
         {
-            _quickControlWpf.Button(text, function);
+            _quickControlWpf.AddButton(text, function);
         }
 
-        public IQuickUI Category(string? title = null)
+        public IQuickUI AddCategory(string? title = null)
         {
-            return _quickControlWpf.Category(title);
+            return _quickControlWpf.AddCategory(title);
         }
 
-        public IQuickUI[] Split(int columns = 2)
+        public Parameter<Color> AddColorPicker(string? label, Color? color, Action<Color>? function)
         {
-            return _quickControlWpf.Split(columns);
+            return _quickControlWpf.AddColorPicker(label, color, function);
         }
 
-        public IQuickUI Label(string text, double percentage = 0.3)
+        public IQuickUI[] Split(int n = 2)
         {
-            return _quickControlWpf.Label(text, percentage);
-        }
-
-        public Parameter<Color> ColorPicker(Color color, Action<Color>? function)
-        {
-            return _quickControlWpf.ColorPicker(color, function);
+            return _quickControlWpf.Split(n);
         }
 
         public void Clear()

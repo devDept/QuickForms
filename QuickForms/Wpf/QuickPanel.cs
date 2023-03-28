@@ -13,12 +13,13 @@ using CheckBox = System.Windows.Controls.CheckBox;
 using ComboBox = System.Windows.Controls.ComboBox;
 using Label = System.Windows.Controls.Label;
 using TextBox = System.Windows.Controls.TextBox;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace QuickForms.Wpf
 {
     internal sealed class QuickPanel : Border, IQuickUI
     {
-        public QuickOptions Options { get; set; } = QuickOptions.Default;
+        public QuickOptions Options { get; set; }
 
         private readonly StackPanel _panel;
 
@@ -30,6 +31,7 @@ namespace QuickForms.Wpf
         
         public QuickPanel()
         {
+            Options = QuickOptions.Default.Copy();
             _panel = new StackPanel();
             Child = _panel;
         }
@@ -63,47 +65,52 @@ namespace QuickForms.Wpf
             Add(grid);
         }
 
-        public Parameter<bool> CheckBox(string label, Action<bool>? function = null)
+        private void Add(string? label, FrameworkElement element)
         {
-            var lab = new Label
+            if (label != null)
             {
-                Content = label,
-                Height = Options.ComponentHeight,
-                VerticalContentAlignment = VerticalAlignment.Center
-            };
+                var lab = new Label
+                {
+                    Content = label,
+                    Height = Options.ComponentHeight,
+                    VerticalContentAlignment = VerticalAlignment.Center
+                };
 
+                Add(lab, element);
+            }
+            else
+            {
+                Add(element);
+            }
+        }
+
+        public Parameter<bool> AddCheckBox(string? label = null, Action<bool>? function = null)
+        {
             var checkbox = new CheckBox
             {
                 Height = Options.ComponentHeight,
                 VerticalContentAlignment = VerticalAlignment.Center,
             };
+            
+            Add(label, checkbox);
 
             Parameter<bool> parameter = (WpfBooleanParameter) checkbox;
 
             if (function != null)
                 parameter.Change(function);
-
-            Add(lab, checkbox);
-
+            
             return parameter;
         }
 
-        public Parameter<string> TextBox(string label, Action<string>? function = null)
+        public Parameter<string> AddTextBox(string? label = null, Action<string>? function = null)
         {
-            var lab = new Label
-            {
-                Content = label,
-                Height = Options.ComponentHeight,
-                VerticalContentAlignment = VerticalAlignment.Center
-            };
-
             var tb = new TextBox
             {
                 Height = Options.ComponentHeight,
                 VerticalContentAlignment = VerticalAlignment.Center
             };
-            
-            Add(lab, tb);
+
+            Add(label, tb);
 
             Parameter<string> p = (WpfStringParameter) tb;
 
@@ -113,15 +120,9 @@ namespace QuickForms.Wpf
             return p;
         }
 
-        public Parameter<double> TrackBar(string label, double min, double max, double? step = null, Action<double>? function = null)
+        public Parameter<double> AddTrackBar(string? label, double min, double max, double? step = null,
+            Action<double>? function = null)
         {
-            var lab = new Label
-            {
-                Content = label,
-                Height = Options.ComponentHeight,
-                VerticalContentAlignment = VerticalAlignment.Center
-            };
-
             var track = new QuickSlider(min, max)
             {
                 Height = Options.ComponentHeight,
@@ -134,7 +135,7 @@ namespace QuickForms.Wpf
                 track.IsSnapToTickEnabled = true;
             }
 
-            Add(lab, track);
+            Add(label, track);
             
             Parameter<double> p = (WpfDoubleParameter) track;
 
@@ -143,15 +144,8 @@ namespace QuickForms.Wpf
             return p;
         }
 
-        public Parameter<T> ComboBox<T>(string label, IEnumerable<T> values, Action<T>? function = null)
+        public Parameter<T> AddComboBox<T>(string? label, IEnumerable<T> values, Action<T>? function = null)
         {
-            var lab = new Label
-            {
-                Content = label,
-                Height = Options.ComponentHeight,
-                VerticalContentAlignment = VerticalAlignment.Center
-            };
-
             var cb = new ComboBox
             {
                 Height = Options.ComponentHeight,
@@ -161,7 +155,7 @@ namespace QuickForms.Wpf
             foreach (var val in values)
                 cb.Items.Add(val);
 
-            Add(lab, cb);
+            Add(label, cb);
             
             Parameter<T> p = (WpfParameter<T>) cb;
 
@@ -169,16 +163,9 @@ namespace QuickForms.Wpf
 
             return p;
         }
-
-        public Parameter<T> RadioButtons<T>(IDictionary<T, string> values, Action<T>? function = null)
+        
+        public void AddButton(string? text, Action function)
         {
-            throw new NotImplementedException();
-        }
-
-        public void Button(string text, Action? function = null)
-        {
-            function ??= () => { };
-
             Button btn = new Button
             {
                 Content = text,
@@ -190,22 +177,17 @@ namespace QuickForms.Wpf
             Add(btn);
         }
 
-        public Parameter<Color> ColorPicker(Color color, Action<Color>? function)
+        public Parameter<Color> AddColorPicker(string? label, Color? color, Action<Color>? function)
         {
-            var lab = new Label
-            {
-                Content = "Color",
-                Height = Options.ComponentHeight,
-                VerticalContentAlignment = VerticalAlignment.Center
-            };
+            var c = color ?? Color.Red;
 
             var cp = new ColorPicker
             {
                 Height = Options.ComponentHeight,
-                ActiveColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B)
+                ActiveColor = System.Windows.Media.Color.FromArgb(c.A, c.R, c.G, c.B)
             };
 
-            Add(lab, cp);
+            Add(label, cp);
 
             Parameter<Color> parameter = (WpfColorParameter) cp;
 
@@ -215,7 +197,7 @@ namespace QuickForms.Wpf
             return parameter;
         }
 
-        public IQuickUI Category(string? title = null)
+        public IQuickUI AddCategory(string? title = null)
         {
             Category cat = new Category
             {
@@ -236,14 +218,25 @@ namespace QuickForms.Wpf
             return cat.QuickPanel;
         }
 
-        public IQuickUI[] Split(int columns = 2)
+        public IQuickUI[] Split(int n = 2)
         {
-            throw new NotImplementedException();
-        }
+            Grid grid = new Grid();
+            IQuickUI[] columns = new IQuickUI[n];
 
-        public IQuickUI Label(string text, double percentage = 0.3)
-        {
-            throw new NotImplementedException();
+            for (int i = 0; i < n; i++)
+            {
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+                var panel = new QuickPanel();
+
+                Grid.SetColumn(panel, i);
+                grid.Children.Add(panel);
+                columns[i] = panel;
+            }
+
+            Add(grid);
+
+            return columns;
         }
 
         public void Clear()

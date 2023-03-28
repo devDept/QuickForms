@@ -48,54 +48,51 @@ namespace QuickForms.WinForm
             set => _quickControl.Padding = value;
         }
 
-        public Parameter<bool> CheckBox(string label, Action<bool>? function = null)
+        public QuickOptions Options
         {
-            return _quickControl.CheckBox(label, function);
+            get => _quickControl.Options;
+            set => _quickControl.Options = value;
         }
 
-        public Parameter<string> TextBox(string label, Action<string>? function = null)
+        public Parameter<bool> AddCheckBox(string? label = null, Action<bool>? function = null)
         {
-            return _quickControl.TextBox(label, function);
+            return _quickControl.AddCheckBox(label, function);
         }
 
-        public Parameter<double> TrackBar(string label, double min, double max, double? step = null, Action<double>? function = null)
+        public Parameter<string> AddTextBox(string? label = null, Action<string>? function = null)
         {
-            return _quickControl.TrackBar(label, min, max, step, function);
+            return _quickControl.AddTextBox(label, function);
         }
 
-        public Parameter<T> ComboBox<T>(string label, IEnumerable<T> values, Action<T>? function = null)
+        public Parameter<double> AddTrackBar(string? label, double min, double max, double? step = null,
+            Action<double>? function = null)
         {
-            return _quickControl.ComboBox(label, values, function);
+            return _quickControl.AddTrackBar(label, min, max, step, function);
         }
 
-        public Parameter<T> RadioButtons<T>(IDictionary<T, string> values, Action<T>? function = null)
+        public Parameter<T> AddComboBox<T>(string? label, IEnumerable<T> values, Action<T>? function = null)
         {
-            return _quickControl.RadioButtons(values, function);
+            return _quickControl.AddComboBox(label, values, function);
+        }
+        
+        public void AddButton(string? text, Action function)
+        {
+            _quickControl.AddButton(text, function);
         }
 
-        public void Button(string text, Action function)
+        public IQuickUI AddCategory(string? title = null)
         {
-            _quickControl.Button(text, function);
+            return _quickControl.AddCategory(title);
+        }
+        
+        public Parameter<Color> AddColorPicker(string? label, Color? color, Action<Color>? function)
+        {
+            return _quickControl.AddColorPicker(label, color, function);
         }
 
-        public IQuickUI Category(string? title = null)
+        public IQuickUI[] Split(int n = 2)
         {
-            return _quickControl.Category(title);
-        }
-
-        public IQuickUI[] Split(int columns = 2)
-        {
-            return _quickControl.Split(columns);
-        }
-
-        public IQuickUI Label(string text, double percentage = 0.3)
-        {
-            return _quickControl.Label(text, percentage);
-        }
-
-        public Parameter<Color> ColorPicker(Color color, Action<Color>? function)
-        {
-            return _quickControl.ColorPicker(color, function);
+            return _quickControl.Split(n);
         }
 
         public void Clear()

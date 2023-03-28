@@ -28,16 +28,16 @@ namespace DemoWpf
             QuickForm qf = new QuickForm();
             qf.Show();
 
-            var a = qf.CheckBox("Hello");
+            var a = qf.AddCheckBox("Hello");
 
-            qf.CheckBox("Hello");
+            qf.AddCheckBox("Hello");
 
             a.Value = true;
 
-            qf.Button("Hello darkness", () => { a.Value = !a.Value; });
-            qf.Button("Hello darkness", () => { MessageBox.Show("Pipo"); });
+            qf.AddButton("Hello darkness", () => { a.Value = !a.Value; });
+            qf.AddButton("Hello darkness", () => { MessageBox.Show("Pipo"); });
 
-            qf.TrackBar("Hello", 0, 10, 1);
+            qf.AddTrackBar("Hello", 0, 10, 1);
         }
     }
 }
