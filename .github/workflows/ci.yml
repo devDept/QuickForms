@@ -30,4 +30,4 @@ jobs:
 
       # https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net#publishing-to-package-registries
       - name: Publish
-        run: dotnet nuget push QuickForms/bin/Release/*.nupkg
+        run: dotnet nuget push QuickForms/bin/Release/*.nupkg --skip-duplicate
