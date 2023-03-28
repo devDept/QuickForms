@@ -32,4 +32,4 @@ jobs:
       - name: Pack
         run: dotnet pack QuickForms/QuickForms.csproj --configuration Release --no-build
       - name: Publish
-        run: dotnet nuget push QuickForms/bin/Release/*.nupkg
+        run: dotnet nuget push QuickForms/bin/Release/*.nupkg --skip-duplicate
