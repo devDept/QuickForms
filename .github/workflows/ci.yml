@@ -17,7 +17,7 @@ jobs:
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
       - name: Install dependencies
-        run: dotnet restore
+        run: dotnet restore QuickForms
       - name: Build
         run: dotnet build --configuration Release --no-restore QuickForms\QuickForms.csproj
       - name: Test
