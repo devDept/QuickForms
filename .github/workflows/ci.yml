@@ -27,6 +27,7 @@ jobs:
         run: dotnet test --no-restore --verbosity normal QuickForms/QuickForms.csproj
       - name: Pack
         run: dotnet pack QuickForms/QuickForms.csproj --configuration Release --no-build
-	# https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net#publishing-to-package-registries
+
+      # https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net#publishing-to-package-registries
       - name: Publish
         run: dotnet nuget push QuickForms/bin/Release/*.nupkg
