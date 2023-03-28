@@ -16,4 +16,8 @@ qf.AddButton("Hello World", () =>
 
 Other than buttons, you can use QuickForms to create track bars, check boxes, combo boxes, and color pickers. Here's an animated GIF that demonstrates some of the functionalities:
 
-![Logo](https://raw.githubusercontent.com/devdept/QuickForms/main/media/sample_usage.gif)
+![Sample usage GIF](https://raw.githubusercontent.com/devdept/QuickForms/main/media/sample_usage.gif)
+
+It is also possible to edit the user interface dynamically and add or remove existing controls. The following GIF shows a table where the number of rows and columns can be changed using two track bars.
+
+![Dynamic table GIF](https://raw.githubusercontent.com/devdept/QuickForms/main/media/dynamic_table.gif)
