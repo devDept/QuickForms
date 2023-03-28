@@ -18,6 +18,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Resource Include="Icon.ico" />
 	  <Resource Include="Icon.png">
 	    <Pack>True</Pack>
