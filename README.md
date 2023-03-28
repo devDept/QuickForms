@@ -14,4 +14,6 @@ qf.AddButton("Hello World", () =>
 });
 ```
 
-Other than buttons, you can use QuickForms to create track bars, check boxes, combo boxes, and color pickers.
+Other than buttons, you can use QuickForms to create track bars, check boxes, combo boxes, and color pickers. Here's an animated GIF that demonstrates some of the functionalities:
+
+![Logo](https://raw.githubusercontent.com/devdept/QuickForms/main/media/sample_usage.gif)
