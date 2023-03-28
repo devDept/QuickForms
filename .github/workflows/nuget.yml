@@ -1,0 +1,31 @@
+name: Publish on NuGet
+
+# Guide:
+# https://levelup.gitconnected.com/publish-to-nuget-with-github-actions-4e1486e7c19f
+
+on: [workflow_dispatch]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '6.0.x' ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Install dependencies
+        run: dotnet restore QuickForms
+      - name: Build
+        run: dotnet build --configuration Release --no-restore QuickForms/QuickForms.csproj
+      - name: Test
+        run: dotnet test --no-restore --verbosity normal QuickForms/QuickForms.csproj
+      - name: Pack
+        run: dotnet pack QuickForms/QuickForms.csproj --configuration Release --no-build      
+      - name: Push to NuGet
+        run: dotnet nuget push "*.nupkg" --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
