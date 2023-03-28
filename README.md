@@ -1,4 +1,4 @@
-# ![Logo](https://github.com/devdept/QuickForms/raw/main/banner.png)
+# ![Logo](https://raw.githubusercontent.com/devdept/QuickForms/main/banner.png)
 
 ![example workflow](https://github.com/devdept/QuickForms/actions/workflows/main.yml/badge.svg)
 
