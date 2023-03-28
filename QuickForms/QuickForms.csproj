@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
 		<TargetFrameworks>net6.0-windows;net472</TargetFrameworks>
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<LangVersion>10.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<UseWPF>true</UseWPF>
