@@ -26,4 +26,5 @@ jobs:
         run: dotnet pack --configuration Release --no-build --output QuickForms/QuickForms.csproj
       - name: Push
         run: dotnet nuget push "bin/Release/NuGet.QuickForms.${VERSION}.nupkg"  --api-key ${GITHUB_TOKEN} --source "github"
-        env: GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          super_secret: ${{ secrets.SuperSecret }}
