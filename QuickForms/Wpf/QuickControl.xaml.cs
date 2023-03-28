@@ -113,10 +113,4 @@ namespace QuickForms.Wpf
             return gd;
         }
     }
-
-    public enum Themes
-    {
-        Dark,
-        Light
-    }
 }

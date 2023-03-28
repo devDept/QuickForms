@@ -1,4 +1,5 @@
-using QuickForms.Wpf;
+using QuickForms.Core;
+using QuickForms.WinForm;
 
 namespace DemoWinForm
 {
@@ -12,7 +13,7 @@ namespace DemoWinForm
             // Quick form external window
             // ---------------------------------
 
-            QuickForms.WinForm.QuickForm qf = new QuickForms.WinForm.QuickForm();
+            QuickForm qf = new QuickForm();
             qf.Show();
 
             var a = qf.AddCheckBox("Hello");
