@@ -4,14 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using QuickForms.Wpf;
 
 namespace DemoWpf
@@ -25,6 +17,10 @@ namespace DemoWpf
         {
             InitializeComponent();
 
+            // ---------------------------------
+            // Quick form external window
+            // ---------------------------------
+
             QuickForm qf = new QuickForm();
             qf.Show();
 
@@ -35,9 +31,32 @@ namespace DemoWpf
             a.Value = true;
 
             qf.AddButton("Hello darkness", () => { a.Value = !a.Value; });
-            qf.AddButton("Hello darkness", () => { MessageBox.Show("Pipo"); });
+            qf.AddButton("Light", () =>
+            {
+                qf.SetTheme(Themes.Light);
+            });
 
-            qf.AddTrackBar("Hello", 0, 10, 1);
+            // ---------------------------------
+            // Left panel
+            // ---------------------------------
+
+            QuickControlLeft.AddTextBox("Textbox");
+            QuickControlLeft.AddTrackBar("Trackbar", 0, 100);
+            QuickControlLeft.AddColorPicker("Color");
+
+            // ---------------------------------
+            // Right panel
+            // ---------------------------------
+
+            QuickControlRight.AddComboBox("Combo box", new[] { 0, 1, 2, 3, 4 }.Select(x => $"Option {x}"));
+
+            var cat = QuickControlRight.AddCategory();
+            var cb = cat.AddCheckBox("Yes or no?");
+
+            QuickControlRight.AddButton("Button", () =>
+            {
+                cb.Value = !cb.Value;
+            });
         }
     }
 }

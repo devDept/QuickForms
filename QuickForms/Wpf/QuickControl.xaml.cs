@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Resources;
 using System.Windows;
-using System.Windows.Controls;
 using QuickForms.Core;
 
 namespace QuickForms.Wpf
 {
+    [System.ComponentModel.ToolboxItem(false)]
     public partial class QuickControl : IQuickUI
     {
         public QuickControl()
@@ -58,7 +57,7 @@ namespace QuickForms.Wpf
             return QuickUI.AddCategory(title);
         }
         
-        public Parameter<Color> AddColorPicker(string? label, Color? color, Action<Color>? function)
+        public Parameter<Color> AddColorPicker(string? label = null, Color? color = null, Action<Color>? function = null)
         {
             return QuickUI.AddColorPicker(label, color, function);
         }

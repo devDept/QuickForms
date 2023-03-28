@@ -1,12 +1,18 @@
-﻿<Window x:Class="DemoWpf.MainWindow"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DemoWpf"
+        xmlns:Wpf="clr-namespace:QuickForms.Wpf;assembly=QuickForms" x:Class="DemoWpf.MainWindow"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Wpf:QuickControl Name="QuickControlLeft"/>
+        <Wpf:QuickControl Grid.Column="1" Name="QuickControlRight"/>
     </Grid>
 </Window>

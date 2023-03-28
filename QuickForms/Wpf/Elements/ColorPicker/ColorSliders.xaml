@@ -7,7 +7,7 @@
                          xmlns:uiExtensions="clr-namespace:QuickForms.Wpf.Elements.ColorPicker.UIExtensions"
                          mc:Ignorable="d" 
                          d:DesignHeight="120" d:DesignWidth="200"
-                         x:Name="uc">
+                         x:Name="uc" x:ClassModifier="internal">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

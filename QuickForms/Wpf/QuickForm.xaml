@@ -17,10 +17,8 @@
     </Window.Resources>
 
     <Grid Background="{DynamicResource AppBackground}">
-        <Border Padding="10">
-            <DockPanel>
-                <local:QuickControl x:Name="QuickUI"></local:QuickControl>
-            </DockPanel>
-        </Border>
+        <DockPanel>
+            <local:QuickControl x:Name="QuickUI"></local:QuickControl>
+        </DockPanel>
     </Grid>
 </Window>

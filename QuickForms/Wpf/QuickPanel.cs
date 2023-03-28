@@ -3,17 +3,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Controls;
 using System.Windows;
-using System.Windows.Forms;
+using System.Windows.Controls.Primitives;
 using QuickForms.Core;
 using QuickForms.Wpf.Elements;
 using QuickForms.Wpf.Elements.ColorPicker;
-using Button = System.Windows.Controls.Button;
-using ButtonBase = System.Windows.Controls.Primitives.ButtonBase;
-using CheckBox = System.Windows.Controls.CheckBox;
-using ComboBox = System.Windows.Controls.ComboBox;
-using Label = System.Windows.Controls.Label;
-using TextBox = System.Windows.Controls.TextBox;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace QuickForms.Wpf
 {
@@ -31,9 +24,12 @@ namespace QuickForms.Wpf
         
         public QuickPanel()
         {
-            Options = QuickOptions.Default.Copy();
+            Options = QuickOptions.Default.Clone();
+            
             _panel = new StackPanel();
             Child = _panel;
+
+            Padding = Options.DefaultPadding;
         }
 
         private void Add(FrameworkElement element)

@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace QuickForms.Wpf.Elements
 {
-    public partial class Category : UserControl
+    internal partial class Category : UserControl
     {
         public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
             nameof(CornerRadius), typeof(CornerRadius), typeof(Category), new PropertyMetadata(default(CornerRadius)));

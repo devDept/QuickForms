@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              x:Name="Uc"
-             UseLayoutRounding="True">
+             UseLayoutRounding="True" x:ClassModifier="internal">
 
     <UserControl.Template>
         <ControlTemplate TargetType="{x:Type local:ColorPicker}">

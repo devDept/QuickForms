@@ -8,7 +8,7 @@
                 xmlns:wpf="clr-namespace:QuickForms.Wpf"
                 mc:Ignorable="d" 
                 d:DesignHeight="450" d:DesignWidth="800"
-                x:Name="Uc">
+                x:Name="Uc" x:ClassModifier="internal">
 
     <UserControl.Template>
         <ControlTemplate TargetType="{x:Type local:Category}">

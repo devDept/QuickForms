@@ -9,7 +9,7 @@ namespace QuickForms.Wpf.Elements.ColorPicker
     /* Color picker code is from https://github.com/PixiEditor/ColorPicker.
      */
 
-    public class PickerControlBase : UserControl, IColorStateStorage
+    internal class PickerControlBase : UserControl, IColorStateStorage
     {
         public static readonly DependencyProperty ColorStateProperty =
             DependencyProperty.Register(nameof(ColorState), typeof(ColorState), typeof(PickerControlBase),
@@ -97,7 +97,7 @@ namespace QuickForms.Wpf.Elements.ColorPicker
         }
     }
     
-    public partial class ColorSliders : PickerControlBase
+    internal partial class ColorSliders : PickerControlBase
     {
         public static readonly DependencyProperty SmallChangeProperty =
             DependencyProperty.Register(nameof(SmallChange), typeof(double), typeof(ColorSliders),

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using QuickForms.Core;
 using QuickForms.Wpf;
 
 namespace QuickForms.WinForm
 {
-    public class QuickControl : ElementHost, IQuickUI
+    public class QuickControl : Panel, IQuickUI
     {
         private readonly Wpf.QuickControl _quickControlWpf;
 
@@ -15,7 +16,11 @@ namespace QuickForms.WinForm
         {
             _quickControlWpf = new Wpf.QuickControl();
 
-            Child = _quickControlWpf;
+            Controls.Add(new ElementHost
+            {
+                Child = _quickControlWpf,
+                Dock = DockStyle.Fill
+            });
         }
 
         public new double Padding
@@ -61,7 +66,7 @@ namespace QuickForms.WinForm
             return _quickControlWpf.AddCategory(title);
         }
 
-        public Parameter<Color> AddColorPicker(string? label, Color? color, Action<Color>? function)
+        public Parameter<Color> AddColorPicker(string? label = null, Color? color = null, Action<Color>? function = null)
         {
             return _quickControlWpf.AddColorPicker(label, color, function);
         }

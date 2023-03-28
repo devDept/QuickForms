@@ -5,7 +5,7 @@ using QuickForms.Wpf.Elements.ColorPicker.Models;
 
 namespace QuickForms.Wpf.Elements.ColorPicker
 {
-    public partial class ColorPicker
+    internal partial class ColorPicker
     {
         public static readonly DependencyProperty ActiveColorProperty = DependencyProperty.RegisterAttached("ActiveColor", typeof(Color), typeof(ColorPicker),
             new PropertyMetadata(Color.FromArgb(255, 255, 0, 0)));
