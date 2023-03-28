@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Runtime.Serialization;
 using System.Windows;
 using QuickForms.Core;
 using QuickForms.Wpf;
@@ -8,91 +7,57 @@ Thread thread = new Thread(() =>
 {
     QuickForm qf = new QuickForm();
 
-    var a = qf.AddCheckBox("Hello");
+    qf.AddTrackBar("TrackBar", 1, 9, 1, d => { Console.WriteLine(d); });
 
-    qf.AddCheckBox("Hello");
-
-    a.Value = true;
-
-    qf.AddButton("Hello!", () => { a.Value = !a.Value; });
-    qf.AddButton("Hello!", () => { qf.AddButton("Hello bro!", () => {}); });
-
-    qf.AddTrackBar("Hello", 1, 9, 1, d =>
-    {
-        Console.WriteLine(d);
-    });
-
-    var cb = qf.AddComboBox("Label", new string[]
+    var cb = qf.AddComboBox("ComboBox", new[]
     {
         "Hello",
         "World"
     }, s =>
     {
+        // print the selected value
         Console.WriteLine(s);
     });
 
-    cb.Value = "Reeas";
+    // set the selected combo box item
+    cb.Value = "World";
 
-    qf.AddComboBox("Values", new []
+    qf.AddTextBox("TextBox", t =>
     {
-        0.Name("Zero"),
-        1.Name("Uno")
-    }, i =>
-    {
-        Console.WriteLine(i);
-    });
-
-    qf.AddTextBox("Hello", t =>
-    {
+        // print the user text
         Console.WriteLine(t);
     });
 
-    qf.AddColorPicker("Color", Color.Lime, (col) =>
+    qf.AddColorPicker("Color", Color.Lime, c =>
     {
-        Console.WriteLine(col.GetHue());
+        // print color's hex code
+        Console.WriteLine($"#{c.R:X2}{c.G:X2}{c.B:X2}");
     });
 
-    var qp = qf.AddCategory("Cats & Dogs");
-
-    qp.AddButton("Hola", () => {});
-
-    qp = qp.AddCategory("Nasty nested category with very long title");
-
-    var copy = qp;
-
-    qp.AddButton("Delete", () =>
-    {
-        copy.Clear();
-    });
-
-    qp = qp.AddCategory();
+    var qp = qf.AddCategory("Category");
 
     qp.AddCheckBox("Yes or no?");
 
-    qp = qf.AddCategory("Options");
+    qp.AddButton("Button", () => { });
 
-    qp.AddTrackBar(null, 0, 10, 1);
-    qp.AddColorPicker();
-    qp.AddCheckBox();
-    qp.AddTextBox();
-
+    // create a table with 2 rows and 5 columns
     var table = qf.AddCategory();
     table.Padding = 5;
     table.Options.VerticalSpacing = 0;
 
-    for (int r = 0; r < 5; r++)
+    for (int r = 0; r < 2; r++)
     {
-        var row = table.Split(5);
-
-        foreach (IQuickUI col in row)
+        foreach (IQuickUI col in table.Split(5))
         {
             col.AddTextBox();
             col.Padding = 5;
         }
     }
-    
+
+    // current theme
     Themes theme = Themes.Dark;
 
+    // create a button to change the theme
     qf.AddButton("Change theme", () =>
     {
         Themes newTheme = theme == Themes.Dark ? Themes.Light : Themes.Dark;
@@ -103,5 +68,7 @@ Thread thread = new Thread(() =>
     new Application().Run(qf);
 });
 
+// the application must be single threaded in order
+// for WinForm / WPF to work
 thread.SetApartmentState(ApartmentState.STA);
 thread.Start();
