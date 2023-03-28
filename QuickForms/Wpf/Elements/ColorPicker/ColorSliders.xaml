@@ -1,0 +1,182 @@
+﻿<colorPicker:PickerControlBase x:Class="QuickForms.Wpf.Elements.ColorPicker.ColorSliders"
+                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                         xmlns:colorPicker="clr-namespace:QuickForms.Wpf.Elements.ColorPicker"
+                         xmlns:uiExtensions="clr-namespace:QuickForms.Wpf.Elements.ColorPicker.UIExtensions"
+                         mc:Ignorable="d" 
+                         d:DesignHeight="120" d:DesignWidth="200"
+                         x:Name="uc" x:ClassModifier="internal">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../../../Wpf/Themes/DarkTheme.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style x:Key="RepeatButtonTransparent" TargetType="{x:Type RepeatButton}">
+                <Setter Property="OverridesDefaultStyle" Value="true" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Focusable" Value="false" />
+                <Setter Property="IsTabStop" Value="false" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type RepeatButton}">
+                            <Rectangle Fill="{TemplateBinding Background}" Height="{TemplateBinding Height}"
+                                       Width="{TemplateBinding Width}" />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <ControlTemplate x:Key="SliderThumbHorizontalDefault" TargetType="{x:Type Thumb}">
+                <Grid HorizontalAlignment="Center" UseLayoutRounding="True" VerticalAlignment="Center">
+                    <Border BorderThickness="1" CornerRadius="1" Height="12" Width="12"
+                            BorderBrush="{StaticResource Swatch3}" Background="Transparent">
+                        <Border BorderThickness="1" Height="10" Width="10" BorderBrush="{StaticResource Swatch4}" Opacity="0.3"
+                                Background="Transparent">
+                        </Border>
+                    </Border>
+                </Grid>
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="PreviewColorSliderTemplate" TargetType="{x:Type uiExtensions:PreviewColorSlider}">
+                <Border x:Name="border" CornerRadius="5"
+                        BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}"
+                        SnapsToDevicePixels="True">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border HorizontalAlignment="Left" CornerRadius="2,0,0,2" Grid.RowSpan="3" Width="6"
+                                Height="12"
+                                Background="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay, Path=LeftCapColor}" />
+                        <Border HorizontalAlignment="Right" CornerRadius="0,2,2,0" Grid.RowSpan="3" Width="6"
+                                Height="12"
+                                Background="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay, Path=RightCapColor}" />
+                        <Border Grid.RowSpan="3" Background="{TemplateBinding Background}" Margin="6,0"
+                                HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        </Border>
+                        <TickBar x:Name="TopTick" Fill="{TemplateBinding Foreground}" Height="4" Margin="0,0,0,2"
+                                 Placement="Top" Grid.Row="0" Visibility="Collapsed" />
+                        <TickBar x:Name="BottomTick" Fill="{TemplateBinding Foreground}" Height="4" Margin="0,2,0,0"
+                                 Placement="Bottom" Grid.Row="2" Visibility="Collapsed" />
+                        <Border x:Name="TrackBackground" Background="Transparent" BorderThickness="0" Height="0"
+                                Margin="5,0"
+                                Grid.Row="1" VerticalAlignment="center">
+                            <Canvas Margin="-6,-1">
+                                <Rectangle x:Name="PART_SelectionRange"
+                                           Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
+                                           Height="4.0"
+                                           Visibility="Hidden" />
+                            </Canvas>
+                        </Border>
+                        <Track x:Name="PART_Track" Grid.Row="1">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Command="{x:Static Slider.DecreaseLarge}"
+                                              Style="{StaticResource RepeatButtonTransparent}" />
+                            </Track.DecreaseRepeatButton>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Command="{x:Static Slider.IncreaseLarge}"
+                                              Style="{StaticResource RepeatButtonTransparent}" />
+                            </Track.IncreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb x:Name="Thumb" Focusable="False" Height="12" OverridesDefaultStyle="True"
+                                       Template="{StaticResource SliderThumbHorizontalDefault}"
+                                       VerticalAlignment="Center"
+                                       Width="12" />
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                </Border>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsSelectionRangeEnabled" Value="true">
+                        <Setter Property="Visibility" TargetName="PART_SelectionRange" Value="Visible" />
+                    </Trigger>
+                    <Trigger Property="IsKeyboardFocused" Value="true">
+                        <Setter Property="Foreground" TargetName="Thumb" Value="Blue" />
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid Column="0">
+            <Label HorizontalContentAlignment="Center" 
+                   Foreground="{Binding ElementName=uc, Path=Foreground}" 
+                   FontFamily="{Binding ElementName=uc, Path=FontFamily}" 
+                   FontSize="{Binding ElementName=uc, Path=FontSize}" 
+            >H</Label>
+        </Grid>
+        <Grid Height="12" Row="0" Column="1">
+            <uiExtensions:HsvColorSlider Height="12"
+                                         SliderHsvType="H" Minimum="0" Maximum="360" IsMoveToPointEnabled="True"
+                                         SmallChangeBindable="{Binding ElementName=uc, Path=SmallChange}"
+                                         Value="{Binding Path=Color.HSV_H, Mode=TwoWay, ElementName=uc}" CurrentColorState="{Binding Path=ColorState, ElementName=uc}"
+                                         Template="{StaticResource PreviewColorSliderTemplate}"/>
+        </Grid>
+        <Grid Column="0" Row="1">
+            <Label HorizontalContentAlignment="Center" 
+                   Foreground="{Binding ElementName=uc, Path=Foreground}" 
+                   FontFamily="{Binding ElementName=uc, Path=FontFamily}" 
+                   FontSize="{Binding ElementName=uc, Path=FontSize}" 
+            >S</Label>
+        </Grid>
+        <Grid Row="1" Column="1">
+            <uiExtensions:HsvColorSlider Height="12"
+                                         SliderHsvType="S" Minimum="0" Maximum="100" IsMoveToPointEnabled="True"
+                                         SmallChangeBindable="{Binding ElementName=uc, Path=SmallChange}"
+                                         Value="{Binding Path=Color.HSV_S, Mode=TwoWay, ElementName=uc}"
+                                         CurrentColorState="{Binding Path=ColorState, ElementName=uc}"
+                                         Template="{StaticResource PreviewColorSliderTemplate}" />
+        </Grid>
+        <Grid Column="0" Row="2">
+            <Label HorizontalContentAlignment="Center" 
+                   Foreground="{Binding ElementName=uc, Path=Foreground}" 
+                   FontFamily="{Binding ElementName=uc, Path=FontFamily}" 
+                   FontSize="{Binding ElementName=uc, Path=FontSize}" 
+            >V</Label>
+        </Grid>
+        <Grid Column="1" Row="2">
+            <uiExtensions:HsvColorSlider Height="12"
+                                         SliderHsvType="V" Minimum="0" Maximum="100" IsMoveToPointEnabled="True"
+                                         SmallChangeBindable="{Binding ElementName=uc, Path=SmallChange}"
+                                         Value="{Binding Path=Color.HSV_V, Mode=TwoWay, ElementName=uc}"
+                                         CurrentColorState="{Binding Path=ColorState, ElementName=uc}"
+                                         Template="{StaticResource PreviewColorSliderTemplate}" />
+        </Grid>
+        <Grid Column="0" Row="3">
+            <Label HorizontalContentAlignment="Center" 
+                   Foreground="{Binding ElementName=uc, Path=Foreground}" 
+                   FontFamily="{Binding ElementName=uc, Path=FontFamily}" 
+                   FontSize="{Binding ElementName=uc, Path=FontSize}" 
+            >A</Label>
+        </Grid>
+        <Grid Column="1" Row="3">
+            <uiExtensions:RgbColorSlider Height="12" SliderArgbType="A" Minimum="0" Maximum="255" IsMoveToPointEnabled="True"
+                                         IsEnabled="{Binding ElementName=uc, Path=ShowAlpha}"
+                                         SmallChangeBindable="{Binding ElementName=uc, Path=SmallChange}"
+                                         Value="{Binding Path=Color.A, Mode=TwoWay, ElementName=uc}" 
+                                         CurrentColorState="{Binding Path=ColorState, ElementName=uc}" 
+                                         Template="{StaticResource PreviewColorSliderTemplate}" />
+            <Border Height="12" BorderThickness="0" CornerRadius="2" Panel.ZIndex="-1" RenderOptions.BitmapScalingMode="NearestNeighbor">
+                <Border.Background>
+                    <ImageBrush ImageSource="Images/transparentbg_mini.png" TileMode="Tile" Viewport="0,0,8,8" ViewportUnits="Absolute" />
+                </Border.Background>
+            </Border>
+        </Grid>
+    </Grid>
+</colorPicker:PickerControlBase>

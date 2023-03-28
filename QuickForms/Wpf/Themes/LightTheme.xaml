@@ -1,0 +1,24 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+
+    <SolidColorBrush x:Key="AppBackground" Color="White" />
+
+    <SolidColorBrush x:Key="TextBrush" Color="#272727" />
+
+    <Color x:Key="Swatch1C">#F2F2F2</Color>
+    <Color x:Key="Swatch2C">#E5E5E5</Color>
+    <Color x:Key="Swatch3C">#D1D1D1</Color>
+    <Color x:Key="Swatch4C">#CDCDCD</Color>
+
+    <SolidColorBrush x:Key="Swatch1" Color="#F2F2F2" />
+    <SolidColorBrush x:Key="Swatch2" Color="#E5E5E5" />
+    <SolidColorBrush x:Key="Swatch3" Color="#D1D1D1" />
+    <SolidColorBrush x:Key="Swatch4" Color="#CDCDCD" />
+
+    <FontFamily x:Key="WindowFont">Calibri</FontFamily>
+    <system:Double x:Key="WindowFontSize">11</system:Double>
+
+    <CornerRadius x:Key="CornerRadius">2</CornerRadius>
+
+</ResourceDictionary>
