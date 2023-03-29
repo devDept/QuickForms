@@ -21,3 +21,7 @@ Other than buttons, you can use QuickForms to create track bars, check boxes, co
 It is also possible to edit the user interface dynamically and add or remove existing controls. The following GIF shows a table where the number of rows and columns can be changed using two track bars.
 
 ![Dynamic table GIF](https://raw.githubusercontent.com/devdept/QuickForms/main/media/dynamic_table.gif)
+
+## How to install
+
+QuickForms is available as a [NuGet package](https://www.nuget.org/packages/QuickForms/). Simply add a reference to the package in your project and you should be good to go. Further information on how to download and install NuGet packages is available online [here](https://learn.microsoft.com/en-us/nuget/quickstart/install-and-use-a-package-in-visual-studio).
