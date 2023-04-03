@@ -1,0 +1,38 @@
+﻿<UserControl x:Class="QuickForms.Wpf.WindowTitleBar"
+             x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="29" d:DesignWidth="300"
+             Background="{DynamicResource SwatchD1}">
+
+    <UserControl.Resources>
+        <ResourceDictionary Source="Themes/Generic.xaml"></ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+        <DockPanel>
+            <Border 
+                DockPanel.Dock="Top" 
+                Background="{DynamicResource Swatch1}" 
+                Padding="5"
+                BorderBrush="{DynamicResource SwatchD1}"
+                BorderThickness="0 0 0 1"
+            >
+                <DockPanel>
+                    <Button Width="18" Padding="0" DockPanel.Dock="Right" HorizontalAlignment="Right" Click="Close_OnClick">
+                        <Image Width="18" Source="Icons/cancel.png"></Image>
+                    </Button>
+                    <Button Width="18" Padding="0" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0 0 6 0" Click="Maximize_OnClick">
+                        <Image Width="18" Source="Icons/square.png"></Image>
+                    </Button>
+                    <Button Width="18" Padding="0" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0 0 6 0" Click="Minimize_OnClick">
+                        <Image Width="18" Source="Icons/minus.png"></Image>
+                    </Button>
+                </DockPanel>
+            </Border>
+        </DockPanel>
+    </Grid>
+</UserControl>

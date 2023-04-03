@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Windows;
+using System.Windows.Input;
 using QuickForms.Core;
+using Color = System.Drawing.Color;
 
 namespace QuickForms.Wpf
 {
@@ -72,9 +74,32 @@ namespace QuickForms.Wpf
 
         public void SetTheme(Themes theme)
         {
-            Resources = Theme.GetThemeDictionary(theme);
+            Resources = ThemeHelper.GetThemeDictionary(theme);
+
+            TitleBar.SetTheme(theme);
 
             QuickUI.SetTheme(theme);
+        }
+
+        private void TitleBar_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                DragMove();
+        }
+
+        private void CloseWindow_OnClick(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        public void Maximize_OnClick(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
+        }
+
+        public void Minimize_OnClick(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
         }
     }
 }

@@ -4,6 +4,8 @@
 
     <SolidColorBrush x:Key="AppBackground" Color="White" />
 
+    <SolidColorBrush x:Key="SwatchD1" Color="#E2E2E2" />
+
     <SolidColorBrush x:Key="TextBrush" Color="#272727" />
 
     <Color x:Key="Swatch1C">#F2F2F2</Color>

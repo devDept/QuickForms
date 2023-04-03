@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows;
 using QuickForms.Core;
 
 namespace QuickForms.Wpf
@@ -74,43 +73,7 @@ namespace QuickForms.Wpf
         
         public void SetTheme(Themes theme)
         {
-            Resources = Theme.GetGeneric(theme);
-        }
-    }
-
-    internal static class Theme
-    {
-        public static ResourceDictionary GetThemeDictionary(Themes theme)
-        {
-            string uri;
-
-            if (theme == Themes.Dark)
-            {
-                uri = "pack://application:,,,/QuickForms;component/Wpf/Themes/DarkTheme.xaml";
-            }
-            else if (theme == Themes.Light)
-            {
-                uri = "pack://application:,,,/QuickForms;component/Wpf/Themes/LightTheme.xaml";
-            }
-            else
-            {
-                throw new ArgumentException("Theme not yet supported.");
-            }
-
-            return new ResourceDictionary { Source = new Uri(uri) };
-        }
-
-        public static ResourceDictionary GetGeneric(Themes theme)
-        {
-            Uri generic = new Uri("pack://application:,,,/QuickForms;component/Wpf/Themes/Generic.xaml");
-
-            var td = GetThemeDictionary(theme);
-
-            var gd = new ResourceDictionary { Source = generic };
-            gd.MergedDictionaries.Clear();
-            gd.MergedDictionaries.Add(td);
-
-            return gd;
+            Resources = ThemeHelper.GetGeneric(theme);
         }
     }
 }
