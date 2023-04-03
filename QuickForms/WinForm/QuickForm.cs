@@ -75,8 +75,8 @@ namespace QuickForms.WinForm
             _wrapper.Padding = new Padding(1);
             _wrapper.Dock = DockStyle.Fill;
 
-            _wrapper.Controls.Add(titleBar);
             _wrapper.Controls.Add(control);
+            _wrapper.Controls.Add(titleBar);
 
             Controls.Add(_wrapper);
 
