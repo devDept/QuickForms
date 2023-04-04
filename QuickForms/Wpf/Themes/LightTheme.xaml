@@ -4,18 +4,22 @@
 
     <SolidColorBrush x:Key="AppBackground" Color="White" />
 
-    <SolidColorBrush x:Key="SwatchD1" Color="#E2E2E2" />
+    <SolidColorBrush x:Key="ScrollbarBackground">#F2F2F2</SolidColorBrush>
+
+    <SolidColorBrush x:Key="ScrollbarThumbBackground">Gainsboro</SolidColorBrush>
 
     <SolidColorBrush x:Key="TextBrush" Color="#272727" />
 
-    <Color x:Key="Swatch1C">#F2F2F2</Color>
-    <Color x:Key="Swatch2C">#E5E5E5</Color>
-    <Color x:Key="Swatch3C">#D1D1D1</Color>
+    <Color x:Key="SwatchD1C">#E2E2E2</Color>
+    <Color x:Key="Swatch1C">#F8F8F8</Color>
+    <Color x:Key="Swatch2C">#EBEBEB</Color>
+    <Color x:Key="Swatch3C">#D6D6D6</Color>
     <Color x:Key="Swatch4C">#CDCDCD</Color>
 
-    <SolidColorBrush x:Key="Swatch1" Color="#F2F2F2" />
-    <SolidColorBrush x:Key="Swatch2" Color="#E5E5E5" />
-    <SolidColorBrush x:Key="Swatch3" Color="#D1D1D1" />
+    <SolidColorBrush x:Key="SwatchD1" Color="#E2E2E2" />
+    <SolidColorBrush x:Key="Swatch1" Color="#F8F8F8" />
+    <SolidColorBrush x:Key="Swatch2" Color="#EBEBEB" />
+    <SolidColorBrush x:Key="Swatch3" Color="#D6D6D6" />
     <SolidColorBrush x:Key="Swatch4" Color="#CDCDCD" />
 
     <FontFamily x:Key="WindowFont">Calibri</FontFamily>

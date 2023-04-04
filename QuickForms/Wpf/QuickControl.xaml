@@ -15,7 +15,9 @@
     </UserControl.Resources>
 
     <Grid>
-        <local:QuickPanel x:Name="QuickUI">
-        </local:QuickPanel>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Style="{DynamicResource ScrollViewer}">
+            <local:QuickPanel x:Name="QuickUI">
+            </local:QuickPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>

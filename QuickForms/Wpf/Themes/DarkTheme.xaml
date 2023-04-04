@@ -3,16 +3,20 @@
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
 
     <SolidColorBrush x:Key="AppBackground" Color="#212127" />
+   
+    <SolidColorBrush x:Key="ScrollbarBackground">#16161A</SolidColorBrush>
 
-    <SolidColorBrush x:Key="SwatchD1" Color="#16161A" />
+    <SolidColorBrush x:Key="ScrollbarThumbBackground">#2A2A32</SolidColorBrush>
 
     <SolidColorBrush x:Key="TextBrush" Color="WhiteSmoke" />
 
+    <Color x:Key="SwatchD1C">#16161A</Color>
     <Color x:Key="Swatch1C">#2A2A32</Color>
     <Color x:Key="Swatch2C">#40404C</Color>
     <Color x:Key="Swatch3C">#565666</Color>
     <Color x:Key="Swatch4C">#6B6B7E</Color>
 
+    <SolidColorBrush x:Key="SwatchD1" Color="#16161A" />
     <SolidColorBrush x:Key="Swatch1" Color="#2A2A32" />
     <SolidColorBrush x:Key="Swatch2" Color="#40404C" />
     <SolidColorBrush x:Key="Swatch3" Color="#565666" />
