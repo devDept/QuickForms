@@ -346,7 +346,7 @@ namespace QuickForms.Wpf
             Func<string> getter = () => textBox.Text;
             Action<string> setter = t => textBox.Text = t;
 
-            return new WpfStringParameter(getter, setter, null, change, lostFocus, gotFocus);
+            return new WpfStringParameter(getter, setter, null, change, gotFocus, lostFocus);
         }
     }
 
