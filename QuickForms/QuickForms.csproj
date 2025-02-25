@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-		<TargetFrameworks>net6.0-windows;net472</TargetFrameworks>
+		<TargetFrameworks>net6.0-windows;net8.0-windows;net9.0-windows;net472</TargetFrameworks>
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 		<LangVersion>10.0</LangVersion>
@@ -16,7 +16,7 @@
 		<PackageIcon>Icon.png</PackageIcon>
 		<AssemblyVersion></AssemblyVersion>
 		<FileVersion></FileVersion>
-		<Version>1.0.5-alpha</Version>
+		<Version>1.0.6</Version>
 		<PackageProjectUrl>https://github.com/devdept/QuickForms</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/devdept/QuickForms</RepositoryUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>

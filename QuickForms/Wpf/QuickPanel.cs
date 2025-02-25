@@ -16,6 +16,9 @@ namespace QuickForms.Wpf
 
         private readonly StackPanel _panel;
 
+        // Maximum width of the first column to ensure consistent layout
+        private double _maxWidth = 0;
+
         public new double Padding
         {
             get => base.Padding.Top;
@@ -49,8 +52,9 @@ namespace QuickForms.Wpf
         {
             var grid = new Grid();
 
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(Options.LabelPercentage, GridUnitType.Star) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100 - Options.LabelPercentage, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
             Grid.SetColumn(label, 0);
             Grid.SetColumn(element, 1);
@@ -59,6 +63,22 @@ namespace QuickForms.Wpf
             grid.Children.Add(element);
 
             Add(grid);
+
+            // Force a layout update to ensure the Grid column width is correctly calculated.
+            _panel.Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
+            _panel.Arrange(new Rect(_panel.DesiredSize));
+            _panel.UpdateLayout();
+
+            if (grid.ColumnDefinitions[0].ActualWidth <= _maxWidth)
+                grid.ColumnDefinitions[0].Width = new GridLength(_maxWidth);
+            else
+            {
+                _maxWidth = grid.ColumnDefinitions[0].ActualWidth;
+                foreach (Grid child in _panel.Children)
+                {
+                    child.ColumnDefinitions[0].Width = new GridLength(_maxWidth);
+                }
+            }
         }
 
         private void Add(string? label, FrameworkElement element)

@@ -7,6 +7,7 @@
         x:Class="QuickForms.Wpf.QuickForm"
         mc:Ignorable="d"
         Title=""
+        MinHeight="100" MinWidth="500"
         Height="450" Width="400"
         SnapsToDevicePixels="True"
         UseLayoutRounding="True"

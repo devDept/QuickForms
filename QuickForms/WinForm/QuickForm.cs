@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
@@ -31,7 +32,7 @@ namespace QuickForms.WinForm
             Name = "QuickForm";
             AutoScaleDimensions = new SizeF(6F, 13F);
             AutoScaleMode = AutoScaleMode.Font;
-            MinimumSize = new Size(400, 0);
+            MinimumSize = new Size(500, 100);
 
             // we need this padding or the user will not
             // be able to resize the form
@@ -99,12 +100,14 @@ namespace QuickForms.WinForm
             base.OnResizeEnd(e);
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public new double Padding
         {
             get => _quickControl.Padding;
             set => _quickControl.Padding = value;
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public QuickOptions Options
         {
             get => _quickControl.Options;

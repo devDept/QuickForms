@@ -4,30 +4,37 @@ on: [push]
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    runs-on: windows-latest # Windows is required for .NET Framework 4.7.2
     strategy:
       matrix:
-        dotnet-version: [ '6.0.x' ]
+        dotnet-version: ['6.0.x', '8.0.x', '9.0.x']
 
     steps:
       - uses: actions/checkout@v3
-      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+
+      - name: Setup .NET SDK ${{ matrix.dotnet-version }}
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
           source-url: https://nuget.pkg.github.com/devdept/index.json
         env:
-          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup .NET Framework 4.7.2
+        if: matrix.dotnet-version == '6.0.x' # Install only once, as it's required for .NET Framework projects
+        uses: microsoft/setup-msbuild@v1
+
       - name: Install dependencies
         run: dotnet restore QuickForms
+
       - name: Build
         run: dotnet build --configuration Release --no-restore QuickForms/QuickForms.csproj
+
       - name: Test
         run: dotnet test --no-restore --verbosity normal QuickForms/QuickForms.csproj
+
       - name: Pack
         run: dotnet pack QuickForms/QuickForms.csproj --configuration Release --no-build
 
-      # https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net#publishing-to-package-registries
       - name: Publish
         run: dotnet nuget push QuickForms/bin/Release/*.nupkg --skip-duplicate

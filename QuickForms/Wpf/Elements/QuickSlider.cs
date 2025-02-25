@@ -25,9 +25,7 @@ namespace QuickForms.Wpf.Elements
 
         public QuickSlider(double min, double max) : base()
         {
-            int n = $"{max:0}".Length; // integer part number of digits
-
-            NumberFormat = $"{{0:{new string('0', n)}.00}}";
+            NumberFormat = $"{{0:{new string('0', 1)}.00}}"; // Format the number with at least 1 digit before the decimal point and 2 decimal places
 
             Minimum = min;
             Maximum = max;

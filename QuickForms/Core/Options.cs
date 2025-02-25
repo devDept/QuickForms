@@ -20,11 +20,6 @@ namespace QuickForms.Core
         public double ComponentHeight { get; set; } = 30;
 
         /// <summary>
-        /// Percentage of the quick UI taken by labels next to controls.
-        /// </summary>
-        public int LabelPercentage { get; set; } = 30;
-
-        /// <summary>
         /// Default padding for newly created quick UIs.
         /// </summary>
         public double DefaultPadding { get; set; } = 10;
@@ -39,7 +34,6 @@ namespace QuickForms.Core
             {
                 VerticalSpacing = VerticalSpacing,
                 ComponentHeight = ComponentHeight,
-                LabelPercentage = LabelPercentage,
                 DefaultPadding = DefaultPadding
             };
         }

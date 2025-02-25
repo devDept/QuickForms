@@ -78,7 +78,7 @@
             this.Text = "Form1";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
-
+            this.MinimumSize = new Size(500, 100);
         }
 
         #endregion

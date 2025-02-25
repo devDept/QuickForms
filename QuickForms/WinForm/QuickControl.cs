@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
@@ -23,12 +24,14 @@ namespace QuickForms.WinForm
             });
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public new double Padding
         {
             get => _quickControlWpf.Padding;
             set => _quickControlWpf.Padding = value;
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public QuickOptions Options
         {
             get => _quickControlWpf.Options;
