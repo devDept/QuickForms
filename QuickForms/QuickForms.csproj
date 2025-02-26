@@ -13,6 +13,7 @@
 		<Title>QuickForms</Title>
 		<Authors>devDept</Authors>
 		<Description>Prototype WinForm and WPF user interfaces quickly via code.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageIcon>Icon.png</PackageIcon>
 		<AssemblyVersion></AssemblyVersion>
 		<FileVersion></FileVersion>
