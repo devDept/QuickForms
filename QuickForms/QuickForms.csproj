@@ -12,8 +12,9 @@
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>QuickForms</Title>
 		<Authors>devDept</Authors>
+    <Copyright>Copyright (c) 2006-2025 devDept Software S.r.l.</Copyright>
 		<Description>Prototype WinForm and WPF user interfaces quickly via code.</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageIcon>Icon.png</PackageIcon>
 		<AssemblyVersion></AssemblyVersion>
 		<FileVersion></FileVersion>
@@ -28,6 +29,10 @@
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
 	  </None>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
 	</ItemGroup>
 
 	<ItemGroup>
