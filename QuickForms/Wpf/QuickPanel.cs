@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Controls;
@@ -74,9 +74,11 @@ namespace QuickForms.Wpf
             else
             {
                 _maxWidth = grid.ColumnDefinitions[0].ActualWidth;
-                foreach (Grid child in _panel.Children)
+
+                foreach (var child in _panel.Children)
                 {
-                    child.ColumnDefinitions[0].Width = new GridLength(_maxWidth);
+                    if(child is Grid childGrid)
+                        childGrid.ColumnDefinitions[0].Width = new GridLength(_maxWidth);
                 }
             }
         }
