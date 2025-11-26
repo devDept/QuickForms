@@ -18,7 +18,7 @@
 		<PackageIcon>Icon.png</PackageIcon>
 		<AssemblyVersion></AssemblyVersion>
 		<FileVersion></FileVersion>
-		<Version>1.0.6</Version>
+		<Version>1.0.7</Version>
 		<PackageProjectUrl>https://github.com/devdept/QuickForms</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/devdept/QuickForms</RepositoryUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
